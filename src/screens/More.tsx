@@ -55,6 +55,9 @@ export default function More() {
         </div>
       </div></div>
 
+      <div className="section-label">Sync</div>
+      <SyncCard />
+
       <div className="section-label">Data</div>
       <div className="card flush"><div className="row-list">
         <div className="row" onClick={() => {
@@ -158,5 +161,85 @@ function MonthlyClosingSheet({ open, onClose, month, setMonth }: { open: boolean
         </button>
       </div>
     </Sheet>
+  )
+}
+
+
+function SyncCard() {
+  const store = useStore()
+  const [joining, setJoining] = useState(false)
+  const [codeInput, setCodeInput] = useState('')
+  const [copied, setCopied] = useState(false)
+
+  const copy = async () => {
+    if (!store.syncCode) return
+    try {
+      await navigator.clipboard.writeText(store.syncCode)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch { /* ignore */ }
+  }
+
+  if (store.syncCode) {
+    return (
+      <div className="card" style={{ padding: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <span style={{ width: 8, height: 8, borderRadius: 99, background: 'var(--green-ink, #2e7d32)' }} />
+          <strong>Cloud sync is on</strong>
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 10 }}>
+          Changes on this device appear on every device that uses the same sync code.
+        </div>
+        <div style={{ fontFamily: 'monospace', fontSize: 14, background: 'var(--bg-2, #f1f1ee)', borderRadius: 10, padding: '10px 12px', wordBreak: 'break-all', marginBottom: 10 }}>
+          {store.syncCode}
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn" style={{ flex: 1 }} onClick={copy}>{copied ? 'Copied!' : 'Copy code'}</button>
+          <button
+            className="btn"
+            style={{ flex: 1, color: 'var(--red-ink)' }}
+            onClick={() => { if (confirm('Turn off sync on this device? Data stays on the device and in the cloud.')) store.disableSync() }}
+          >
+            Turn off
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="card" style={{ padding: 16 }}>
+      <div style={{ fontWeight: 600, marginBottom: 6 }}>Sync between devices</div>
+      <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 12 }}>
+        Keep iPhone and computer up to date automatically. Start sync here, then enter the same code on the other device.
+      </div>
+      {joining ? (
+        <div>
+          <input
+            className="input"
+            style={{ width: '100%', marginBottom: 8, fontFamily: 'monospace' }}
+            placeholder="Paste sync code from the other device"
+            value={codeInput}
+            onChange={(e) => setCodeInput(e.target.value)}
+          />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn" style={{ flex: 1 }} onClick={() => setJoining(false)}>Cancel</button>
+            <button
+              className="btn primary"
+              style={{ flex: 1 }}
+              disabled={codeInput.trim().length < 20}
+              onClick={() => { if (codeInput.trim().length >= 20) store.enableSync(codeInput) }}
+            >
+              Connect
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn primary" style={{ flex: 1 }} onClick={() => store.enableSync()}>Start sync</button>
+          <button className="btn" style={{ flex: 1 }} onClick={() => setJoining(true)}>I have a code</button>
+        </div>
+      )}
+    </div>
   )
 }
