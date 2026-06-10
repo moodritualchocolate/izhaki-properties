@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import type {
   AppState,
   Property,
@@ -14,6 +14,15 @@ import type {
 import { buildSeedState } from '../data/seed'
 import { uid, currentMonthKey } from '../lib/util'
 import { buildLinks } from '../lib/links'
+import {
+  startSync,
+  stopSync,
+  pushState,
+  getSyncCode,
+  saveSyncCode,
+  clearSyncCode,
+  generateSyncCode,
+} from '../lib/sync'
 
 const STORAGE_KEY = 'gal-properties-state-v1'
 
@@ -73,6 +82,10 @@ interface StoreValue extends AppState {
   // monthly closing
   closeMonth: (month: string) => void
   resetAll: () => void
+  // sync
+  syncCode: string | null
+  enableSync: (code?: string) => string
+  disableSync: () => void
 }
 
 const StoreContext = createContext<StoreValue | null>(null)
@@ -87,6 +100,22 @@ function findUnit(state: AppState, unitId: string): { p: Property; u: Unit } | n
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, undefined, loadState)
+  const [syncCode, setSyncCode] = useState<string | null>(getSyncCode())
+  const applyingRemote = useRef(false)
+  const stateRef = useRef(state)
+  stateRef.current = state
+
+  // Realtime cloud sync (optional, enabled from More -> Sync)
+  useEffect(() => {
+    if (!syncCode) return
+    startSync(syncCode, stateRef.current, {
+      onRemoteState: (remote) => {
+        applyingRemote.current = true
+        dispatch({ type: 'set', state: remote })
+      },
+    })
+    return () => stopSync()
+  }, [syncCode])
 
   useEffect(() => {
     try {
@@ -94,6 +123,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     } catch {
       /* ignore quota */
     }
+    if (applyingRemote.current) {
+      applyingRemote.current = false
+      return
+    }
+    pushState(state)
   }, [state])
 
   const value = useMemo<StoreValue>(() => {
@@ -471,8 +505,21 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         }),
 
       resetAll: () => dispatch({ type: 'set', state: buildSeedState() }),
+
+      syncCode,
+      enableSync: (code) => {
+        const c = (code && code.trim()) || generateSyncCode()
+        saveSyncCode(c)
+        setSyncCode(c)
+        return c
+      },
+      disableSync: () => {
+        clearSyncCode()
+        stopSync()
+        setSyncCode(null)
+      },
     }
-  }, [state])
+  }, [state, syncCode])
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
 }
