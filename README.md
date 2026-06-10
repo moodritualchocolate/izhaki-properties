@@ -1,0 +1,1 @@
+# izhaki-properties
