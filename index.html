@@ -33,7 +33,6 @@ body{
 }
 h1,h2,h3{font-family:'Frank Ruhl Libre','Heebo',serif}
 a{color:var(--green)}
-
 /* ---------- header ---------- */
 header{
   background:var(--header);color:#F2F5EF;
@@ -47,15 +46,12 @@ header{
 .month-nav button{background:none;border:0;color:#F2F5EF;font-size:1.15rem;width:32px;height:32px;border-radius:50%;cursor:pointer}
 .month-nav button:active{background:rgba(255,255,255,.15)}
 #monthLabel{font-weight:700;font-size:.9rem;min-width:92px;text-align:center}
-
 main{max-width:680px;margin:0 auto;padding:16px}
 .view{display:none}.view.active{display:block}
-
 /* ---------- greeting ---------- */
 .greet{margin:2px 2px 12px}
 .greet h2{font-size:1.45rem;font-weight:900}
 .greet span{font-size:.84rem;color:var(--muted)}
-
 /* ---------- ring ---------- */
 .ring-card{
   background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
@@ -76,7 +72,6 @@ main{max-width:680px;margin:0 auto;padding:16px}
 .chip.ok{background:var(--green-soft);color:var(--green)}
 .chip.part{background:var(--amber-soft);color:var(--amber)}
 .chip.no{background:var(--red-soft);color:var(--red)}
-
 /* ---------- reminders bar ---------- */
 .remind-bar{
   width:100%;display:flex;align-items:center;justify-content:center;gap:8px;
@@ -85,7 +80,6 @@ main{max-width:680px;margin:0 auto;padding:16px}
   box-shadow:var(--shadow);cursor:pointer;
 }
 .remind-bar span{background:rgba(255,255,255,.22);border-radius:999px;padding:1px 10px;font-size:.8rem}
-
 /* ---------- lease strip ---------- */
 .strip-label{
   display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:800;
@@ -116,12 +110,10 @@ main{max-width:680px;margin:0 auto;padding:16px}
   font:inherit;font-size:.74rem;font-weight:800;color:var(--green);background:var(--green-soft);
   border-radius:999px;padding:5px 11px
 }
-
 /* ---------- search ---------- */
 .search{margin-bottom:12px}
 .search input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 14px;font:inherit;background:var(--card)}
 .search input:focus{outline:2px solid var(--green);border-color:transparent}
-
 /* ---------- collection groups ---------- */
 .pgroup{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
 .pgroup>h3{
@@ -159,7 +151,6 @@ main{max-width:680px;margin:0 auto;padding:16px}
 .partial-line span{font-size:.76rem;color:var(--muted)}
 .fee-badge{display:inline-block;font-size:.7rem;font-weight:800;background:var(--red-soft);color:var(--red);border-radius:999px;padding:2px 8px;margin-inline-start:6px;vertical-align:middle}
 .receipt-line{margin-top:8px}
-
 /* ---------- PROPERTIES (redesigned) ---------- */
 .pcard{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
 .pcard-head{padding:15px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
@@ -167,7 +158,6 @@ main{max-width:680px;margin:0 auto;padding:16px}
 .pcard-head .meta{font-size:.75rem;color:var(--muted);font-family:'Heebo';font-weight:400;margin-top:2px}
 .pcard-body{display:none;border-top:1px solid var(--line);padding:14px 14px 6px;background:#EFF2ED}
 .pcard.open .pcard-body{display:block}
-
 /* unit sub-card: clear separation */
 .unit-card{
   background:var(--card);border-radius:14px;box-shadow:0 1px 2px rgba(20,52,43,.07);
@@ -204,7 +194,6 @@ main{max-width:680px;margin:0 auto;padding:16px}
 .btn-ghost{background:transparent;color:var(--green);border:1.5px dashed var(--green);padding:9px 14px;font-size:.85rem}
 .btn-danger{background:var(--red-soft);color:var(--red);font-size:.85rem;padding:8px 14px}
 .btn-block{width:100%;justify-content:center;font-size:1rem}
-
 /* ---------- repairs ---------- */
 .rfilters{display:flex;gap:6px;margin-bottom:12px}
 .rfilters button{flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:7px;font:inherit;font-size:.8rem;font-weight:700;color:var(--muted);cursor:pointer}
@@ -218,7 +207,6 @@ main{max-width:680px;margin:0 auto;padding:16px}
 .rstatus.done{background:var(--green-soft);color:var(--green)}
 .rcard .rmeta{font-size:.76rem;color:var(--muted);margin-top:3px}
 .rcard .racts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
-
 /* ---------- reports ---------- */
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .stat{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:13px 14px}
@@ -244,7 +232,6 @@ table.tax th{text-align:right;color:var(--muted);font-weight:700;padding:6px 4px
 table.tax td{padding:7px 4px;border-bottom:1px solid var(--line)}
 table.tax tr:last-child td{border-bottom:0;font-weight:800}
 .tax-acts{display:flex;gap:8px;margin-top:12px}
-
 /* ---------- more / backup ---------- */
 .bk-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px}
 .bk-card h3{margin-bottom:6px}
@@ -254,13 +241,11 @@ table.tax tr:last-child td{border-bottom:0;font-weight:800}
 .count-box{flex:1;background:var(--bg);border-radius:12px;padding:12px;text-align:center}
 .count-box b{font-family:'Frank Ruhl Libre',serif;font-size:1.5rem;display:block;color:var(--green)}
 .count-box span{font-size:.72rem;color:var(--muted)}
-
 /* ---------- nav ---------- */
 nav{position:fixed;bottom:0;right:0;left:0;background:var(--card);border-top:1px solid var(--line);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
 nav button{flex:1;border:0;background:none;font:inherit;font-size:.68rem;font-weight:700;color:var(--muted);padding:9px 0 7px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
 nav button .ni{font-size:1.2rem}
 nav button.active{color:var(--green)}
-
 /* ---------- sheet ---------- */
 .overlay{position:fixed;inset:0;background:rgba(20,43,38,.45);z-index:40;display:none;align-items:flex-end;justify-content:center}
 .overlay.show{display:flex}
@@ -279,10 +264,8 @@ nav button.active{color:var(--green)}
 .remind-row:last-child{border-bottom:0}
 .remind-row .ri b{font-size:.92rem;display:block}
 .remind-row .ri span{font-size:.74rem;color:var(--muted)}
-
 .toast{position:fixed;bottom:calc(86px + env(safe-area-inset-bottom));right:50%;transform:translateX(50%);background:var(--ink);color:#fff;padding:10px 20px;border-radius:999px;font-size:.85rem;font-weight:700;z-index:50;opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}
 .toast.show{opacity:1}
-
 /* ---------- nudge / sync ---------- */
 .nudge{background:var(--card);border:1.5px solid var(--amber);border-radius:var(--radius);padding:13px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
 .nudge b{display:block;font-size:.92rem;margin-bottom:9px}
@@ -302,7 +285,6 @@ nav button.active{color:var(--green)}
 </style>
 </head>
 <body>
-
 <header>
   <div class="head-row">
     <div class="brand">Gal Properties<small>ניהול נכסים וגבייה</small></div>
@@ -313,7 +295,6 @@ nav button.active{color:var(--green)}
     </div>
   </div>
 </header>
-
 <main>
   <!-- ============ COLLECTION ============ -->
   <section id="view-collect" class="view active">
@@ -335,20 +316,17 @@ nav button.active{color:var(--green)}
         </div>
       </div>
     </div>
-
     <div id="nudgeBox"></div>
     <button class="remind-bar" id="remindBtn" style="display:none">📨 שליחת תזכורות תשלום <span id="remindCount">0</span></button>
     <div id="leaseAlerts"></div>
     <div class="search"><input id="searchBox" type="search" placeholder="חיפוש דייר, כתובת או יחידה…"></div>
     <div id="collectList"></div>
   </section>
-
   <!-- ============ PROPERTIES ============ -->
   <section id="view-props" class="view">
     <div id="propsList"></div>
     <button class="btn btn-primary btn-block" id="addPropBtn">+ הוספת נכס</button>
   </section>
-
   <!-- ============ REPAIRS ============ -->
   <section id="view-repairs" class="view">
     <div class="rfilters">
@@ -360,7 +338,6 @@ nav button.active{color:var(--green)}
     <div id="repairsList"></div>
     <button class="btn btn-primary btn-block" id="addRepairBtn">+ דיווח תקלה</button>
   </section>
-
   <!-- ============ REPORTS ============ -->
   <section id="view-reports" class="view">
     <div class="stat-grid" id="statGrid"></div>
@@ -385,7 +362,6 @@ nav button.active{color:var(--green)}
       </div>
     </div>
   </section>
-
   <!-- ============ MORE ============ -->
   <section id="view-more" class="view">
     <div class="bk-card">
@@ -454,7 +430,6 @@ nav button.active{color:var(--green)}
     </div>
   </section>
 </main>
-
 <nav>
   <button data-view="collect" class="active"><span class="ni">$</span>גבייה</button>
   <button data-view="props"><span class="ni">⌂</span>נכסים</button>
@@ -462,7 +437,6 @@ nav button.active{color:var(--green)}
   <button data-view="reports"><span class="ni">📊</span>דוחות</button>
   <button data-view="more"><span class="ni">⋯</span>עוד</button>
 </nav>
-
 <div class="overlay" id="overlay">
   <div class="sheet" role="dialog" aria-modal="true">
     <h3 id="sheetTitle"></h3>
@@ -473,9 +447,7 @@ nav button.active{color:var(--green)}
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
@@ -527,7 +499,6 @@ function SEED(){
 const DEFAULT_TMPL = "Hi {name}, this is a friendly reminder that the rent of {amount} for {unit} at {address} is due for {month}. Please send the payment at your earliest convenience. Thank you!";
 const RENEW_TMPL = "Hi {name}, your lease for {unit} at {address} ends on {date}. Please let us know if you would like to renew. Thank you!";
 const RECEIPT_TMPL = "Hi {name}, we confirm receipt of {paid} for {unit} at {address} — {month}.{balance} Thank you! — Gal Properties";
-
 /* late fee: active for the real current month, N days past collection day */
 function lateFeeFor(rec){
   const fee = Number(DB.settings.lateFee)||0;
@@ -539,7 +510,6 @@ function lateFeeFor(rec){
   if(t.getDate() <= due) return 0;
   return (rec.status!=='paid') ? fee : 0;
 }
-
 /* ================= storage ================= */
 const KEY='gal-properties-final-v1';
 const mem={};
@@ -557,10 +527,8 @@ DB.payments = DB.payments || {};
 for(const p of DB.properties) for(const un of (p.units||[])){ un.documents = un.documents||[]; un.expenses = un.expenses||[]; }
 store.set(DB);
 function save(){ store.set(DB); pushSync(); }
-
 const uid = () => Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
 const usd = n => (n==null||isNaN(n)) ? '—' : '$'+Number(n).toLocaleString('en-US');
-
 /* ================= month / year state ================= */
 const now = new Date();
 let curYear = now.getFullYear(), curMonth = now.getMonth();
@@ -572,7 +540,6 @@ document.getElementById('prevMonth').onclick = ()=>{ curMonth--; if(curMonth<0){
 document.getElementById('nextMonth').onclick = ()=>{ curMonth++; if(curMonth>11){curMonth=0;curYear++} refresh(); };
 document.getElementById('prevYear').onclick = ()=>{ taxYear--; renderReports(); };
 document.getElementById('nextYear').onclick = ()=>{ taxYear++; renderReports(); };
-
 /* ================= helpers ================= */
 function payRec(uidv, mk){
   mk = mk || monthKey();
@@ -633,11 +600,9 @@ function fillTmpl(tmpl, t, un, p, extra){
     .replaceAll('{month}', `${EN_MONTHS[curMonth]} ${curYear}`)
     .replaceAll('{date}', (extra&&extra.date)||un.leaseEnd||'');
 }
-
 /* ================= collection ================= */
 let searchTerm='';
 document.getElementById('searchBox').addEventListener('input', e=>{ searchTerm=e.target.value.trim(); renderCollect(); });
-
 function renderRing(){
   let expected=0, collected=0, nPaid=0, nPart=0, nNone=0;
   for(const {un} of allUnits()){
@@ -673,7 +638,6 @@ function renderRing(){
   rb.style.display = open ? 'flex' : 'none';
   document.getElementById('remindCount').textContent = open;
 }
-
 function unpaidList(){
   const out=[];
   for(const {p,un} of allUnits()){
@@ -682,7 +646,6 @@ function unpaidList(){
   }
   return out;
 }
-
 /* ---- WhatsApp reminders sheet ---- */
 document.getElementById('remindBtn').onclick = ()=>{
   const list = unpaidList();
@@ -717,7 +680,6 @@ document.getElementById('remindBtn').onclick = ()=>{
     };
   }
 };
-
 /* ---- payment receipt ---- */
 function receiptMsg(t, un, p, rec){
   const paid = rec.status==='paid' ? (Number(rec.amount)||Number(un.rent)||0) : (Number(rec.amount)||0);
@@ -747,7 +709,6 @@ function sendReceipt(p, un){
   }
   openSheet(`קבלה · ${un.name}`, html, null, true);
 }
-
 function renderLeaseAlerts(){
   const box = document.getElementById('leaseAlerts');
   const soon = [];
@@ -779,7 +740,6 @@ function renderLeaseAlerts(){
   box.innerHTML = `<div class="strip-label">⏳ חוזים שמסתיימים בקרוב <b>${soon.length}</b></div>
     <div class="lease-strip">${cards}</div>`;
 }
-
 function leaseBadge(un){
   if(!un.leaseEnd) return '';
   const dl = daysLeft(un.leaseEnd);
@@ -791,14 +751,12 @@ function leaseBadge(un){
   }
   return `<span class="lease-badge ${cls}">${txt}</span>`;
 }
-
 function tenantChips(un){
   return `<div class="tenant-chips">` + (un.tenants||[]).map(t=>{
     const tel = telLink(t.phone), wa = waLink(t.phone);
     return `<span class="tchip">${esc(t.name)}${tel?` <a href="${tel}" aria-label="חיוג">📞</a>`:''}${wa?` <a href="${wa}" target="_blank" rel="noopener" aria-label="וואטסאפ">💬</a>`:''}</span>`;
   }).join('') + `</div>`;
 }
-
 function renderCollect(){
   const box = document.getElementById('collectList');
   box.innerHTML='';
@@ -859,7 +817,6 @@ function renderCollect(){
     box.innerHTML = `<div class="bk-card" style="text-align:center"><h3>לא נמצאו תוצאות</h3><p>נסו חיפוש אחר.</p></div>`;
   }
 }
-
 /* ================= PROPERTIES (redesigned) ================= */
 const openProps = new Set();
 function renderProps(){
@@ -886,7 +843,6 @@ function renderProps(){
       openProps.has(p.id) ? openProps.delete(p.id) : openProps.add(p.id); renderProps();
     };
     card.appendChild(head);
-
     const body = document.createElement('div'); body.className='pcard-body';
     for(const un of units){
       const uc = document.createElement('div'); uc.className='unit-card';
@@ -938,7 +894,6 @@ function renderProps(){
   }
 }
 document.getElementById('addPropBtn').onclick = ()=>propForm();
-
 /* ================= REPAIRS ================= */
 let repairFilter='all';
 document.querySelectorAll('.rfilters button').forEach(b=>{
@@ -985,7 +940,6 @@ document.getElementById('repairsList').addEventListener('click', e=>{
   else if(act==='next'){ r.status = r.status==='open'?'progress':'done'; save(); renderRepairs(); renderReports(); }
   else if(act==='del'){ if(confirm('למחוק את התקלה?')){ DB.repairs = DB.repairs.filter(x=>x.id!==r.id); save(); renderRepairs(); renderReports(); } }
 });
-
 /* ================= REPORTS ================= */
 function monthIncome(mk){
   let sum=0;
@@ -1017,7 +971,6 @@ function renderReports(){
     <div class="stat g"><b>${usd(totalRent-monthlyExp)}</b><span>נטו חודשי צפוי</span></div>
     <div class="stat ${occupied===units.length?'g':'a'}"><b>${units.length?Math.round(occupied/units.length*100):0}%</b><span>תפוסה (${occupied}/${units.length} יחידות)</span></div>
     <div class="stat ${openRep?'r':'g'}"><b>${openRep}</b><span>תקלות פתוחות</span></div>`;
-
   /* 12-month bars */
   const bars=[];
   let maxV=1;
@@ -1035,7 +988,6 @@ function renderReports(){
     const cls = v===0?'zero': (totalRent>0 && v<totalRent*0.7)?'low':'';
     return `<div class="bar-col"><div class="bar ${cls}" style="height:${Math.max(h,2)}%"></div><span class="bar-lbl">${lbl}</span></div>`;
   }).join('');
-
   /* tax table */
   document.getElementById('yearLabel').textContent = taxYear;
   const tbody = document.getElementById('taxBody'); tbody.innerHTML='';
@@ -1092,7 +1044,6 @@ document.getElementById('taxCsvBtn').onclick = ()=>{
   toast('קובץ ה-CSV ירד');
 };
 document.getElementById('taxPrintBtn').onclick = ()=>window.print();
-
 /* ================= sheet forms ================= */
 const overlay = document.getElementById('overlay');
 let sheetOnSave = null;
@@ -1109,7 +1060,6 @@ document.getElementById('sheetCancel').onclick = closeSheet;
 overlay.addEventListener('click', e=>{ if(e.target===overlay) closeSheet(); });
 document.getElementById('sheetSave').onclick = ()=>{ if(sheetOnSave && sheetOnSave()!==false){ closeSheet(); save(); refresh(); } };
 const F = id => (document.getElementById(id)?.value||'').trim();
-
 function propForm(p){
   openSheet(p?'עריכת נכס':'נכס חדש', `
     <div class="field"><label>כתובת</label><input id="f_addr" value="${attr(p?.address)}" placeholder="123 Main St"></div>
@@ -1191,7 +1141,6 @@ function repairForm(r, pid, uidv){
     document.getElementById('f_runit').innerHTML = optsU(e.target.value);
   });
 }
-
 /* ================= MORE: template / csv / backup ================= */
 document.getElementById('tmplBox').value = DB.settings.reminderTemplate || DEFAULT_TMPL;
 document.getElementById('remDay').value = DB.settings.reminderDay || 1;
@@ -1281,7 +1230,6 @@ document.getElementById('resetBtn').onclick = ()=>{
     DB={properties:SEED(),payments:{},repairs:[],settings:{}}; save(); refresh(); toast('אופס בוצע — נטענו נתוני המקור');
   }
 };
-
 /* ================= nav / utils ================= */
 function showView(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
@@ -1290,7 +1238,6 @@ function showView(v){
   window.scrollTo({top:0});
 }
 document.querySelectorAll('nav button').forEach(b=> b.onclick = ()=>showView(b.dataset.view));
-
 function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function attr(s){ return esc(s??''); }
 function fmtDate(s){
@@ -1305,7 +1252,6 @@ function toast(msg){
   clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
 }
 function renderMonthLabel(){ document.getElementById('monthLabel').textContent = `${HE_MONTHS[curMonth]} ${curYear}`; }
-
 /* ================= NUDGE (reminder day) ================= */
 function renderNudge(){
   const box = document.getElementById('nudgeBox');
@@ -1334,7 +1280,6 @@ function maybeNotify(){
     }
   }catch(e){}
 }
-
 /* ================= SYNC (Firebase) ================= */
 const FB_CONFIG = {apiKey:"AIzaSyCv-5E6mJp7E1ZbAyIshutYWXuIVL0R3Uk",authDomain:"izhaki-properties.firebaseapp.com",projectId:"izhaki-properties",storageBucket:"izhaki-properties.firebasestorage.app",messagingSenderId:"612129056260",appId:"1:612129056260:web:b3228e253f06603437f751"};
 const SYNC_KEY='gal-sync-code-v2', CLIENT_KEY='gal-client-id';
@@ -1413,12 +1358,10 @@ document.getElementById('syncDisableBtn').onclick = ()=>{
   try{ localStorage.removeItem(SYNC_KEY); }catch(e){}
   renderSync(); toast('הסנכרון נותק');
 };
-
 function refresh(){ renderMonthLabel(); renderRing(); renderNudge(); renderLeaseAlerts(); renderCollect(); renderProps(); renderRepairs(); renderReports(); renderBackup(); renderSync(); }
 refresh();
 initSync();
 maybeNotify();
-
 /* ================= PWA ================= */
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
   window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
