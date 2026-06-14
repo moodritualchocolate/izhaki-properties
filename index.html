@@ -1,21 +1,1428 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
-    />
-    <meta name="theme-color" content="#F7F7F5" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Gal Properties" />
-    <link rel="apple-touch-icon" href="%BASE_URL%icons/icon-192.png" />
-    <title>Gal Properties</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gal Properties · ניהול נכסים</title>
+<meta name="description" content="ניהול נכסים, דיירים וגבייה חודשית">
+<meta name="theme-color" content="#14342B">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6F2; --card:#FFFFFF; --ink:#1C2B26; --muted:#6B7A73;
+  --green:#1F6F54; --green-soft:#E2F0E9;
+  --amber:#B97A00; --amber-soft:#FBF0DA;
+  --red:#B3422F; --red-soft:#F9E6E1;
+  --blue:#2D5F8A; --blue-soft:#E3EDF6;
+  --header:#14342B; --line:#E3E8E2;
+  --radius:16px; --shadow:0 1px 3px rgba(20,52,43,.08),0 4px 14px rgba(20,52,43,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Heebo',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+  font-size:16px;line-height:1.45;
+  padding-bottom:calc(74px + env(safe-area-inset-bottom));
+}
+h1,h2,h3{font-family:'Frank Ruhl Libre','Heebo',serif}
+a{color:var(--green)}
+
+/* ---------- header ---------- */
+header{
+  background:var(--header);color:#F2F5EF;
+  padding:calc(14px + env(safe-area-inset-top)) 18px 14px;
+  position:sticky;top:0;z-index:20;
+}
+.head-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:1.22rem}
+.brand small{display:block;font-family:'Heebo';font-weight:400;font-size:.7rem;opacity:.75}
+.month-nav{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.1);border-radius:999px;padding:4px 6px}
+.month-nav button{background:none;border:0;color:#F2F5EF;font-size:1.15rem;width:32px;height:32px;border-radius:50%;cursor:pointer}
+.month-nav button:active{background:rgba(255,255,255,.15)}
+#monthLabel{font-weight:700;font-size:.9rem;min-width:92px;text-align:center}
+
+main{max-width:680px;margin:0 auto;padding:16px}
+.view{display:none}.view.active{display:block}
+
+/* ---------- greeting ---------- */
+.greet{margin:2px 2px 12px}
+.greet h2{font-size:1.45rem;font-weight:900}
+.greet span{font-size:.84rem;color:var(--muted)}
+
+/* ---------- ring ---------- */
+.ring-card{
+  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:18px;display:flex;align-items:center;gap:18px;margin-bottom:12px;
+}
+.ring-wrap{position:relative;width:122px;height:122px;flex:none}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--line);stroke-width:11}
+.ring-fg{fill:none;stroke:var(--green);stroke-width:11;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-center b{font-family:'Frank Ruhl Libre',serif;font-size:1.45rem;font-weight:900;color:var(--green)}
+.ring-center span{font-size:.68rem;color:var(--muted)}
+.ring-stats{flex:1;min-width:0}
+.ring-stats .sum{font-family:'Frank Ruhl Libre',serif;font-size:1.3rem;font-weight:900}
+.ring-stats .sum small{font-family:'Heebo';font-weight:400;color:var(--muted);font-size:.82rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:.76rem;font-weight:700;padding:4px 10px;border-radius:999px}
+.chip.ok{background:var(--green-soft);color:var(--green)}
+.chip.part{background:var(--amber-soft);color:var(--amber)}
+.chip.no{background:var(--red-soft);color:var(--red)}
+
+/* ---------- reminders bar ---------- */
+.remind-bar{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--green);color:#fff;border:0;border-radius:14px;
+  font:inherit;font-weight:800;font-size:.95rem;padding:13px;margin-bottom:12px;
+  box-shadow:var(--shadow);cursor:pointer;
+}
+.remind-bar span{background:rgba(255,255,255,.22);border-radius:999px;padding:1px 10px;font-size:.8rem}
+
+/* ---------- lease strip ---------- */
+.strip-label{
+  display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:800;
+  color:var(--muted);margin:2px 2px 8px;letter-spacing:.2px
+}
+.strip-label b{background:var(--amber-soft);color:var(--amber);border-radius:999px;padding:1px 9px;font-size:.76rem}
+.lease-strip{
+  display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;margin-bottom:10px;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none
+}
+.lease-strip::-webkit-scrollbar{display:none}
+.lcard{
+  flex:0 0 auto;width:212px;scroll-snap-align:start;background:var(--card);
+  border-radius:14px;box-shadow:var(--shadow);padding:13px 14px;
+  border-inline-start:4px solid var(--amber);
+}
+.lcard.danger{border-inline-start-color:var(--red)}
+.lcard .days-row{display:flex;align-items:baseline;gap:6px}
+.lcard .days{font-family:'Frank Ruhl Libre',serif;font-size:1.9rem;font-weight:900;line-height:1;color:var(--amber)}
+.lcard.danger .days{color:var(--red)}
+.lcard .days-sub{font-size:.7rem;color:var(--muted);font-weight:700}
+.lcard .l-unit{font-weight:800;font-size:.9rem;margin-top:7px}
+.lcard .l-addr{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lcard .l-date{font-size:.72rem;color:var(--muted);margin-top:3px}
+.lcard .l-acts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.l-act{
+  display:inline-flex;align-items:center;gap:4px;text-decoration:none;border:0;cursor:pointer;
+  font:inherit;font-size:.74rem;font-weight:800;color:var(--green);background:var(--green-soft);
+  border-radius:999px;padding:5px 11px
+}
+
+/* ---------- search ---------- */
+.search{margin-bottom:12px}
+.search input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 14px;font:inherit;background:var(--card)}
+.search input:focus{outline:2px solid var(--green);border-color:transparent}
+
+/* ---------- collection groups ---------- */
+.pgroup{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
+.pgroup>h3{
+  font-size:1rem;font-weight:700;padding:12px 16px;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;gap:8px
+}
+.pgroup>h3 a{font-size:.95rem;text-decoration:none}
+.ppill{font-size:.72rem;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.ppill.ok{background:var(--green-soft);color:var(--green)}
+.ppill.part{background:var(--amber-soft);color:var(--amber)}
+.ppill.no{background:var(--red-soft);color:var(--red)}
+.urow{padding:12px 16px;border-bottom:1px solid var(--line)}
+.urow:last-child{border-bottom:0}
+.urow-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.uname{font-weight:700}
+.urent{font-weight:800;white-space:nowrap}
+.urent.missing{color:var(--muted);font-weight:400}
+.tenant-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.tchip{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border-radius:999px;padding:4px 10px;font-size:.78rem;font-weight:500}
+.tchip a{text-decoration:none;font-size:.85rem}
+.lease-badge{display:inline-block;margin-top:7px;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--bg);color:var(--muted)}
+.lease-badge.warn{background:var(--amber-soft);color:var(--amber)}
+.lease-badge.danger{background:var(--red-soft);color:var(--red)}
+.seg{display:flex;gap:6px;margin-top:9px}
+.seg button{
+  flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;
+  padding:7px 4px;font:inherit;font-size:.82rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s;
+}
+.seg button.on-paid{background:var(--green);border-color:var(--green);color:#fff}
+.seg button.on-part{background:var(--amber);border-color:var(--amber);color:#fff}
+.seg button.on-none{background:var(--red);border-color:var(--red);color:#fff}
+.partial-line{display:none;margin-top:8px;align-items:center;gap:8px}
+.partial-line.show{display:flex}
+.partial-line input{width:110px;border:1px solid var(--amber);border-radius:10px;padding:7px 10px;font:inherit;font-weight:700}
+.partial-line span{font-size:.76rem;color:var(--muted)}
+.fee-badge{display:inline-block;font-size:.7rem;font-weight:800;background:var(--red-soft);color:var(--red);border-radius:999px;padding:2px 8px;margin-inline-start:6px;vertical-align:middle}
+.receipt-line{margin-top:8px}
+
+/* ---------- PROPERTIES (redesigned) ---------- */
+.pcard{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+.pcard-head{padding:15px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
+.pcard-head h3{font-size:1.05rem}
+.pcard-head .meta{font-size:.75rem;color:var(--muted);font-family:'Heebo';font-weight:400;margin-top:2px}
+.pcard-body{display:none;border-top:1px solid var(--line);padding:14px 14px 6px;background:#EFF2ED}
+.pcard.open .pcard-body{display:block}
+
+/* unit sub-card: clear separation */
+.unit-card{
+  background:var(--card);border-radius:14px;box-shadow:0 1px 2px rgba(20,52,43,.07);
+  margin-bottom:12px;overflow:hidden;border:1px solid var(--line);
+}
+.unit-card-head{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:11px 14px;background:var(--green-soft);
+}
+.unit-card-head .un{font-weight:800;font-size:.95rem;color:var(--green)}
+.unit-card-head .ur{font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:1.05rem;color:var(--green)}
+.unit-card-body{padding:11px 14px}
+.kv{display:flex;gap:8px;font-size:.8rem;padding:3px 0;color:var(--muted)}
+.kv b{color:var(--ink);font-weight:700;min-width:64px}
+.unit-tenants{margin-top:7px;border-top:1px dashed var(--line);padding-top:8px}
+.tline{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:.88rem}
+.tline .ti{color:var(--muted);font-size:.74rem}
+.unit-docs{margin-top:7px;border-top:1px dashed var(--line);padding-top:8px}
+.doc-line{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;padding:3px 0}
+.doc-line a{font-weight:700;text-decoration:none}
+.unit-acts{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-top:1px solid var(--line);background:#FCFDFB}
+.uact{
+  border:0;cursor:pointer;font:inherit;font-size:.74rem;font-weight:800;
+  border-radius:999px;padding:6px 12px;background:var(--bg);color:var(--ink);
+  display:inline-flex;align-items:center;gap:4px;text-decoration:none;
+}
+.uact.green{background:var(--green-soft);color:var(--green)}
+.uact.red{background:var(--red-soft);color:var(--red)}
+.icon-btns{display:flex;gap:2px}
+.ib{border:0;background:none;font-size:.95rem;cursor:pointer;padding:5px;border-radius:8px;color:var(--muted);text-decoration:none}
+.ib:active{background:var(--bg)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:12px;cursor:pointer;font:inherit;font-weight:700;padding:11px 18px}
+.btn-primary{background:var(--green);color:#fff;box-shadow:var(--shadow)}
+.btn-ghost{background:transparent;color:var(--green);border:1.5px dashed var(--green);padding:9px 14px;font-size:.85rem}
+.btn-danger{background:var(--red-soft);color:var(--red);font-size:.85rem;padding:8px 14px}
+.btn-block{width:100%;justify-content:center;font-size:1rem}
+
+/* ---------- repairs ---------- */
+.rfilters{display:flex;gap:6px;margin-bottom:12px}
+.rfilters button{flex:1;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:7px;font:inherit;font-size:.8rem;font-weight:700;color:var(--muted);cursor:pointer}
+.rfilters button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.rcard{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:13px 16px;margin-bottom:10px}
+.rcard-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.rcard-top b{font-size:.95rem}
+.rstatus{font-size:.72rem;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.rstatus.open{background:var(--red-soft);color:var(--red)}
+.rstatus.progress{background:var(--amber-soft);color:var(--amber)}
+.rstatus.done{background:var(--green-soft);color:var(--green)}
+.rcard .rmeta{font-size:.76rem;color:var(--muted);margin-top:3px}
+.rcard .racts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+
+/* ---------- reports ---------- */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:13px 14px}
+.stat b{font-family:'Frank Ruhl Libre',serif;font-size:1.35rem;font-weight:900;display:block}
+.stat span{font-size:.72rem;color:var(--muted)}
+.stat.g b{color:var(--green)} .stat.a b{color:var(--amber)} .stat.r b{color:var(--red)} .stat.b b{color:var(--blue)}
+.chart-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.chart-card h3{font-size:.95rem;margin-bottom:12px}
+.bars{display:flex;align-items:flex-end;gap:5px;height:120px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.bar{width:100%;border-radius:5px 5px 0 0;background:var(--green);min-height:2px;position:relative}
+.bar.low{background:var(--amber)}
+.bar.zero{background:var(--line)}
+.bar-lbl{font-size:.58rem;color:var(--muted);white-space:nowrap}
+.tax-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.tax-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.tax-head h3{font-size:.95rem}
+.year-nav{display:flex;align-items:center;gap:4px;background:var(--bg);border-radius:999px;padding:2px 4px}
+.year-nav button{border:0;background:none;font-size:1rem;width:28px;height:28px;cursor:pointer;color:var(--ink)}
+.year-nav span{font-weight:800;font-size:.88rem;min-width:48px;text-align:center}
+table.tax{width:100%;border-collapse:collapse;font-size:.78rem}
+table.tax th{text-align:right;color:var(--muted);font-weight:700;padding:6px 4px;border-bottom:1px solid var(--line)}
+table.tax td{padding:7px 4px;border-bottom:1px solid var(--line)}
+table.tax tr:last-child td{border-bottom:0;font-weight:800}
+.tax-acts{display:flex;gap:8px;margin-top:12px}
+
+/* ---------- more / backup ---------- */
+.bk-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px}
+.bk-card h3{margin-bottom:6px}
+.bk-card p{color:var(--muted);font-size:.85rem;margin-bottom:12px}
+.bk-card textarea{width:100%;min-height:100px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:monospace;font-size:.76rem;direction:ltr;margin-bottom:10px}
+.counts{display:flex;gap:8px;margin-bottom:12px}
+.count-box{flex:1;background:var(--bg);border-radius:12px;padding:12px;text-align:center}
+.count-box b{font-family:'Frank Ruhl Libre',serif;font-size:1.5rem;display:block;color:var(--green)}
+.count-box span{font-size:.72rem;color:var(--muted)}
+
+/* ---------- nav ---------- */
+nav{position:fixed;bottom:0;right:0;left:0;background:var(--card);border-top:1px solid var(--line);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;background:none;font:inherit;font-size:.68rem;font-weight:700;color:var(--muted);padding:9px 0 7px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button .ni{font-size:1.2rem}
+nav button.active{color:var(--green)}
+
+/* ---------- sheet ---------- */
+.overlay{position:fixed;inset:0;background:rgba(20,43,38,.45);z-index:40;display:none;align-items:flex-end;justify-content:center}
+.overlay.show{display:flex}
+.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:680px;padding:20px 20px calc(20px + env(safe-area-inset-bottom));animation:up .22s ease-out;max-height:85vh;overflow:auto}
+@keyframes up{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
+.sheet h3{margin-bottom:14px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 14px;font:inherit;background:#fff}
+.field textarea{min-height:90px}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--green);border-color:transparent}
+.sheet-actions{display:flex;gap:10px;margin-top:16px}
+.sheet-actions .btn{flex:1;justify-content:center}
+.btn-cancel{background:var(--bg);color:var(--ink)}
+.remind-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.remind-row:last-child{border-bottom:0}
+.remind-row .ri b{font-size:.92rem;display:block}
+.remind-row .ri span{font-size:.74rem;color:var(--muted)}
+
+.toast{position:fixed;bottom:calc(86px + env(safe-area-inset-bottom));right:50%;transform:translateX(50%);background:var(--ink);color:#fff;padding:10px 20px;border-radius:999px;font-size:.85rem;font-weight:700;z-index:50;opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* ---------- nudge / sync ---------- */
+.nudge{background:var(--card);border:1.5px solid var(--amber);border-radius:var(--radius);padding:13px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.nudge b{display:block;font-size:.92rem;margin-bottom:9px}
+.nudge .nacts{display:flex;gap:8px;flex-wrap:wrap}
+.sync-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--line);margin-inline-end:6px;vertical-align:middle}
+.sync-dot.on{background:var(--green)}
+.code-pill{font-family:monospace;font-weight:800;letter-spacing:2px;background:var(--bg);padding:5px 12px;border-radius:8px;direction:ltr;display:inline-block;font-size:1rem}
+.sync-row{display:flex;gap:8px;margin-bottom:10px}
+.sync-row input{flex:1;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:inherit;direction:ltr;text-transform:uppercase;font-weight:700;letter-spacing:1px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  header,nav,.view{display:none!important}
+  #view-reports{display:block!important}
+  body{padding:0;background:#fff}
+  .stat-grid,.chart-card{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-row">
+    <div class="brand">Gal Properties<small>ניהול נכסים וגבייה</small></div>
+    <div class="month-nav">
+      <button id="nextMonth" aria-label="חודש הבא">‹</button>
+      <span id="monthLabel"></span>
+      <button id="prevMonth" aria-label="חודש קודם">›</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ============ COLLECTION ============ -->
+  <section id="view-collect" class="view active">
+    <div class="greet"><h2 id="greetTxt"></h2><span id="greetSub"></span></div>
+    <div class="ring-card">
+      <div class="ring-wrap">
+        <svg width="122" height="122" viewBox="0 0 122 122">
+          <circle class="ring-bg" cx="61" cy="61" r="52"></circle>
+          <circle class="ring-fg" id="ringFg" cx="61" cy="61" r="52"></circle>
+        </svg>
+        <div class="ring-center"><b id="ringPct">0%</b><span>נגבה החודש</span></div>
+      </div>
+      <div class="ring-stats">
+        <div class="sum"><span id="sumCollected">$0</span> <small>מתוך <span id="sumExpected">$0</span></small></div>
+        <div class="chips">
+          <span class="chip ok">שולם <b id="cPaid">0</b></span>
+          <span class="chip part">חלקי <b id="cPart">0</b></span>
+          <span class="chip no">לא שולם <b id="cNone">0</b></span>
+        </div>
+      </div>
+    </div>
+
+    <div id="nudgeBox"></div>
+    <button class="remind-bar" id="remindBtn" style="display:none">📨 שליחת תזכורות תשלום <span id="remindCount">0</span></button>
+    <div id="leaseAlerts"></div>
+    <div class="search"><input id="searchBox" type="search" placeholder="חיפוש דייר, כתובת או יחידה…"></div>
+    <div id="collectList"></div>
+  </section>
+
+  <!-- ============ PROPERTIES ============ -->
+  <section id="view-props" class="view">
+    <div id="propsList"></div>
+    <button class="btn btn-primary btn-block" id="addPropBtn">+ הוספת נכס</button>
+  </section>
+
+  <!-- ============ REPAIRS ============ -->
+  <section id="view-repairs" class="view">
+    <div class="rfilters">
+      <button data-f="all" class="on">הכל</button>
+      <button data-f="open">פתוחות</button>
+      <button data-f="progress">בטיפול</button>
+      <button data-f="done">טופלו</button>
+    </div>
+    <div id="repairsList"></div>
+    <button class="btn btn-primary btn-block" id="addRepairBtn">+ דיווח תקלה</button>
+  </section>
+
+  <!-- ============ REPORTS ============ -->
+  <section id="view-reports" class="view">
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="chart-card">
+      <h3>גבייה — 12 חודשים אחרונים</h3>
+      <div class="bars" id="barsBox"></div>
+    </div>
+    <div class="tax-card">
+      <div class="tax-head">
+        <h3>דוח שנתי לפי נכס (Schedule E)</h3>
+        <div class="year-nav">
+          <button id="nextYear">‹</button><span id="yearLabel"></span><button id="prevYear">›</button>
+        </div>
+      </div>
+      <table class="tax">
+        <thead><tr><th>נכס</th><th>הכנסות</th><th>הוצאות</th><th>נטו</th></tr></thead>
+        <tbody id="taxBody"></tbody>
+      </table>
+      <div class="tax-acts">
+        <button class="btn btn-primary" id="taxCsvBtn" style="font-size:.85rem;padding:9px 14px">⬇ CSV לרו״ח</button>
+        <button class="btn btn-cancel" id="taxPrintBtn" style="font-size:.85rem;padding:9px 14px">🖨 הדפסה / PDF</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MORE ============ -->
+  <section id="view-more" class="view">
+    <div class="bk-card">
+      <h3>מצב הנתונים</h3>
+      <div class="counts">
+        <div class="count-box"><b id="nProps">0</b><span>נכסים</span></div>
+        <div class="count-box"><b id="nUnits">0</b><span>יחידות</span></div>
+        <div class="count-box"><b id="nTenants">0</b><span>דיירים</span></div>
+      </div>
+      <p>הנתונים נשמרים במכשיר ונשארים גם אחרי רענון וסגירה.</p>
+    </div>
+    <div class="bk-card">
+      <h3><span class="sync-dot" id="syncDot"></span>סנכרון בין מכשירים</h3>
+      <p id="syncDesc">הפעלה יוצרת קוד משפחה. מזינים את אותו קוד בטלפון של גל — ושניכם רואים אותם נתונים, מתעדכן אוטומטית.</p>
+      <div id="syncOff">
+        <div class="sync-row"><input id="syncCodeInput" placeholder="קוד קיים (או השאר ריק לקוד חדש)" maxlength="10"></div>
+        <button class="btn btn-primary" id="syncEnableBtn" style="font-size:.9rem;padding:10px 16px">🔗 הפעלת סנכרון</button>
+      </div>
+      <div id="syncOn" style="display:none">
+        <p style="margin-bottom:10px">מסונכרן עם הקוד: <span class="code-pill" id="syncCodeShow"></span></p>
+        <button class="btn btn-danger" id="syncDisableBtn">ניתוק סנכרון במכשיר זה</button>
+      </div>
+    </div>
+    <div class="bk-card">
+      <h3>נוסח תזכורת התשלום</h3>
+      <p>נשלח לדיירים ב-WhatsApp. משתנים: {name} {unit} {address} {amount} {month}</p>
+      <textarea id="tmplBox" style="direction:ltr"></textarea>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <label style="font-size:.8rem;font-weight:700;color:var(--muted)">יום הגבייה בחודש</label>
+        <input id="remDay" type="number" min="1" max="28" style="width:70px;border:1px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-weight:700">
+        <button class="uact" id="notifBtn">🔔 הפעלת התראות במכשיר</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <label style="font-size:.8rem;font-weight:700;color:var(--muted)">דמי איחור ($)</label>
+        <input id="lateFee" type="number" min="0" placeholder="0" style="width:80px;border:1px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-weight:700">
+        <label style="font-size:.8rem;font-weight:700;color:var(--muted)">אחרי</label>
+        <input id="lateDays" type="number" min="1" max="27" placeholder="5" style="width:60px;border:1px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-weight:700">
+        <span style="font-size:.8rem;color:var(--muted)">ימים מיום הגבייה (0 = כבוי)</span>
+      </div>
+      <button class="btn btn-primary" id="tmplSaveBtn" style="font-size:.85rem;padding:9px 14px">שמירת הגדרות</button>
+    </div>
+    <div class="bk-card">
+      <h3>ייבוא מ-Excel / CSV</h3>
+      <p>עמודות: address, city, unit, rent, tenant, phone, lease_start, lease_end (שורה לכל דייר). מוסיף לנתונים הקיימים.</p>
+      <input type="file" id="csvFile" accept=".csv,text/csv" style="margin-bottom:10px">
+      <textarea id="csvBox" placeholder="address,city,unit,rent,tenant,phone&#10;123 Main St,Hollywood,Unit 1,2500,John Doe,954-000-0000"></textarea>
+      <button class="btn btn-primary" id="csvBtn" style="font-size:.85rem;padding:9px 14px">ייבוא CSV</button>
+    </div>
+    <div class="bk-card">
+      <h3>גיבוי ושחזור</h3>
+      <p>ייצוא קובץ JSON מלא, או ייבוא גיבוי קיים.</p>
+      <button class="btn btn-primary" id="exportBtn" style="margin-bottom:10px">⬇ ייצוא גיבוי</button>
+      <input type="file" id="importFile" accept="application/json" style="margin-bottom:10px;display:block">
+      <textarea id="importText" placeholder='{"properties":[...]}'></textarea>
+      <button class="btn btn-primary" id="importBtn" style="font-size:.85rem;padding:9px 14px">ייבוא גיבוי</button>
+    </div>
+    <div class="bk-card">
+      <h3>שחזור נתוני המקור</h3>
+      <p>מחזיר את 9 הנכסים, 14 היחידות ו-23 הדיירים המקוריים. היסטוריית הגבייה נשמרת.</p>
+      <button class="btn btn-primary" id="reseedBtn">♻ שחזור הפורטפוליו המקורי</button>
+    </div>
+    <div class="bk-card">
+      <h3>איפוס מלא</h3>
+      <p>מחיקת הכל, כולל היסטוריית גבייה ותקלות.</p>
+      <button class="btn btn-danger" id="resetBtn">מחיקת כל הנתונים</button>
+    </div>
+  </section>
+</main>
+
+<nav>
+  <button data-view="collect" class="active"><span class="ni">$</span>גבייה</button>
+  <button data-view="props"><span class="ni">⌂</span>נכסים</button>
+  <button data-view="repairs"><span class="ni">🔧</span>תקלות</button>
+  <button data-view="reports"><span class="ni">📊</span>דוחות</button>
+  <button data-view="more"><span class="ni">⋯</span>עוד</button>
+</nav>
+
+<div class="overlay" id="overlay">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <h3 id="sheetTitle"></h3>
+    <div id="sheetFields"></div>
+    <div class="sheet-actions">
+      <button class="btn btn-cancel" id="sheetCancel">סגירה</button>
+      <button class="btn btn-primary" id="sheetSave">שמירה</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+/* ================= seed: real portfolio (9 / 14 / 23) ================= */
+let _u=0,_t=0;
+function U(name,rent,leaseStart,leaseEnd,tenants,expenses){
+  return {id:'u'+(++_u),name,rent,leaseStart,leaseEnd,
+    tenants:tenants.map(x=>({id:'t'+(++_t),name:x[0],phone:x[1]||''})),
+    expenses:expenses||[],documents:[]};
+}
+function P(id,address,city,state,zip,county,units){return {id,address,city,state,zip,county,units};}
+function SEED(){
+  _u=0;_t=0;
+  return [
+    P('p1','5221 SW 43rd Ter','Dania Beach','FL','33314','Broward',[
+      U('Unit #2',2950,'10/07/2025','10/06/2026',[['Alexis Tejeda','305-951-0269']]),
+      U('Unit #1',2600,'09/05/2025','09/04/2026',[['Eleazar Mendoza','954-822-5431'],['Celia Angeles','954-822-5431']])
+    ]),
+    P('p2','4333 SW 51st St','Dania Beach','FL','33314','Broward',[
+      U('Main Unit',null,'04/15/2026','04/14/2027',[['Timothey Shimko','954-496-1752']])
+    ]),
+    P('p3','4089 SW 52nd St','Dania Beach','FL','33314','Broward',[
+      U('Unit #5',2850,'07/01/2025','06/30/2026',[['Audrey Price','954-629-7832'],['Jayvin Palmer','954-629-7832'],['Khiry Stewart','954-629-7832']],[{label:'Landscaping',amount:20},{label:'Mortgage',amount:965}]),
+      U('Additional Unit',2700,'10/01/2025','10/31/2026',[['Marella V Williams','954-257-5185'],['Stanton O Smith','954-257-5185']],[{label:'Landscaping',amount:20},{label:'Mortgage',amount:965}])
+    ]),
+    P('p4','5180 SW 43rd Ter','Dania Beach','FL','33314','Broward',[
+      U('Unit B',3030,'07/28/2025','07/27/2026',[['Alfredo Jose Lopez Molina','954-830-9996']]),
+      U('Unit A',2980,'08/15/2025','08/14/2026',[['April Kathleen Marjama',''],['Richard Allen Marjama','']])
+    ]),
+    P('p5','5219 SW 43rd Ter','Dania Beach','FL','33314','Broward',[
+      U('Unit #2',2750,'09/01/2025','08/31/2026',[['Runzhu Liu','909-536-8448'],['Adelin Liu','909-536-8448']]),
+      U('Unit #1A',2525,'09/03/2025','09/02/2026',[['Judeline Valcourt','954-638-4232'],['Koffi Da\u2026','954-638-4232']])
+    ]),
+    P('p6','580 NE 171st St','North Miami Beach','FL','33162','Miami-Dade',[
+      U('Main Unit',3400,'10/01/2025','09/30/2026',[['Marie Louis','305-724-3078'],['Elysrael','305-724-3078']])
+    ]),
+    P('p7','4073 SW 52nd St','Dania Beach','FL','33314','Broward',[
+      U('Unit #5',2950,'07/01/2025','06/30/2026',[['Albert Fischer Doscher','786-521-4303'],['Cheyenne Doscher','786-521-4303']]),
+      U('Additional Unit',2700,'04/01/2026','03/31/2027',[['Shequonnia S. Cooper','305-502-1662']])
+    ]),
+    P('p8','440 South Park Rd #2-409','Hollywood','FL','33021','Broward',[
+      U('Unit #2-409',2400,'06/01/2026','05/31/2027',[['Juan Marin','786-246-1693']])
+    ]),
+    P('p9','6313 Hayes St','Hollywood','FL','','Broward',[
+      U('Main Unit',2950,'11/01/2025','10/31/2026',[['George Izarry','561-569-7867']])
+    ])
+  ];
+}
+const DEFAULT_TMPL = "Hi {name}, this is a friendly reminder that the rent of {amount} for {unit} at {address} is due for {month}. Please send the payment at your earliest convenience. Thank you!";
+const RENEW_TMPL = "Hi {name}, your lease for {unit} at {address} ends on {date}. Please let us know if you would like to renew. Thank you!";
+const RECEIPT_TMPL = "Hi {name}, we confirm receipt of {paid} for {unit} at {address} — {month}.{balance} Thank you! — Gal Properties";
+
+/* late fee: active for the real current month, N days past collection day */
+function lateFeeFor(rec){
+  const fee = Number(DB.settings.lateFee)||0;
+  const days = Number(DB.settings.lateDays)||0;
+  if(!fee || !days) return 0;
+  const t = new Date();
+  if(t.getFullYear()!==curYear || t.getMonth()!==curMonth) return 0;
+  const due = (Number(DB.settings.reminderDay)||1) + days;
+  if(t.getDate() <= due) return 0;
+  return (rec.status!=='paid') ? fee : 0;
+}
+
+/* ================= storage ================= */
+const KEY='gal-properties-final-v1';
+const mem={};
+const store={
+  get(){ try{ return JSON.parse(localStorage.getItem(KEY)) || null }catch(e){ return mem[KEY]||null } },
+  set(v){ try{ localStorage.setItem(KEY, JSON.stringify(v)) }catch(e){ mem[KEY]=v } }
+};
+let DB = store.get();
+if(!DB || !Array.isArray(DB.properties) || DB.properties.length===0){
+  DB = { properties: SEED(), payments: (DB && DB.payments) || {} };
+}
+DB.repairs = DB.repairs || [];
+DB.settings = DB.settings || {};
+DB.payments = DB.payments || {};
+for(const p of DB.properties) for(const un of (p.units||[])){ un.documents = un.documents||[]; un.expenses = un.expenses||[]; }
+store.set(DB);
+function save(){ store.set(DB); pushSync(); }
+
+const uid = () => Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const usd = n => (n==null||isNaN(n)) ? '—' : '$'+Number(n).toLocaleString('en-US');
+
+/* ================= month / year state ================= */
+const now = new Date();
+let curYear = now.getFullYear(), curMonth = now.getMonth();
+let taxYear = now.getFullYear();
+const HE_MONTHS=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+const EN_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const monthKey = () => `${curYear}-${String(curMonth+1).padStart(2,'0')}`;
+document.getElementById('prevMonth').onclick = ()=>{ curMonth--; if(curMonth<0){curMonth=11;curYear--} refresh(); };
+document.getElementById('nextMonth').onclick = ()=>{ curMonth++; if(curMonth>11){curMonth=0;curYear++} refresh(); };
+document.getElementById('prevYear').onclick = ()=>{ taxYear--; renderReports(); };
+document.getElementById('nextYear').onclick = ()=>{ taxYear++; renderReports(); };
+
+/* ================= helpers ================= */
+function payRec(uidv, mk){
+  mk = mk || monthKey();
+  return (DB.payments[mk]||{})[uidv] || {status:'none', amount:0};
+}
+function setPay(uidv, status, amount){
+  const mk = monthKey();
+  DB.payments[mk] = DB.payments[mk] || {};
+  let amt = amount||0;
+  if(status==='paid'){
+    const un = findUnit(uidv); amt = (un && Number(un.rent)) || 0;
+  }
+  DB.payments[mk][uidv] = {status, amount: amt, ts: Date.now()};
+  save(); refresh();
+}
+function findUnit(uidv){
+  for(const p of DB.properties) for(const un of (p.units||[])) if(un.id===uidv) return un;
+  return null;
+}
+function allUnits(){
+  const out=[];
+  for(const p of DB.properties) for(const un of (p.units||[])) out.push({p,un});
+  return out;
+}
+function parseLease(s){
+  if(!s) return null;
+  const parts = s.split(/[\/\-.]/).map(x=>parseInt(x,10));
+  if(parts.length<3 || parts.some(isNaN)) return null;
+  let [m,d,y]=parts; if(y<100) y+=2000;
+  const maxD = new Date(y,m,0).getDate(); if(d>maxD) d=maxD;
+  return new Date(y,m-1,d);
+}
+function daysLeft(s){
+  const d = parseLease(s); if(!d) return null;
+  const t0 = new Date(); t0.setHours(0,0,0,0);
+  return Math.round((d-t0)/864e5);
+}
+function mapsLink(p){
+  const q = encodeURIComponent([p.address,p.city,p.state,p.zip].filter(Boolean).join(', '));
+  return `https://www.google.com/maps/search/?api=1&query=${q}`;
+}
+function waNum(phone){
+  if(!phone) return null;
+  let d = phone.replace(/\D/g,''); if(d.length===10) d='1'+d;
+  return d;
+}
+function waLink(phone, text){
+  const d = waNum(phone); if(!d) return null;
+  return `https://wa.me/${d}` + (text?`?text=${encodeURIComponent(text)}`:'');
+}
+function telLink(phone){ return phone ? 'tel:'+phone.replace(/[^\d+]/g,'') : null; }
+function fillTmpl(tmpl, t, un, p, extra){
+  return tmpl
+    .replaceAll('{name}', t.name.split(' ')[0])
+    .replaceAll('{unit}', un.name)
+    .replaceAll('{address}', `${p.address}, ${p.city}`)
+    .replaceAll('{amount}', usd(un.rent))
+    .replaceAll('{month}', `${EN_MONTHS[curMonth]} ${curYear}`)
+    .replaceAll('{date}', (extra&&extra.date)||un.leaseEnd||'');
+}
+
+/* ================= collection ================= */
+let searchTerm='';
+document.getElementById('searchBox').addEventListener('input', e=>{ searchTerm=e.target.value.trim(); renderCollect(); });
+
+function renderRing(){
+  let expected=0, collected=0, nPaid=0, nPart=0, nNone=0;
+  for(const {un} of allUnits()){
+    const rent = Number(un.rent)||0;
+    expected += rent;
+    const rec = payRec(un.id);
+    if(rec.status==='paid'){ collected += rent; nPaid++; }
+    else if(rec.status==='partial'){ collected += Number(rec.amount)||0; nPart++; }
+    else nNone++;
+  }
+  const pct = expected>0 ? Math.round(collected/expected*100) : 0;
+  const C = 2*Math.PI*52;
+  const fg = document.getElementById('ringFg');
+  fg.style.strokeDasharray = C;
+  fg.style.strokeDashoffset = C*(1-Math.min(pct,100)/100);
+  fg.style.stroke = pct>=50 ? 'var(--green)' : pct>0 ? 'var(--amber)' : 'var(--line)';
+  document.getElementById('ringPct').textContent = pct+'%';
+  document.getElementById('sumCollected').textContent = usd(collected);
+  document.getElementById('sumExpected').textContent = usd(expected);
+  document.getElementById('cPaid').textContent = nPaid;
+  document.getElementById('cPart').textContent = nPart;
+  document.getElementById('cNone').textContent = nNone;
+  const h = new Date().getHours();
+  const greet = h<12 ? 'בוקר טוב, גל ☀️' : h<18 ? 'צהריים טובים, גל' : 'ערב טוב, גל 🌙';
+  document.getElementById('greetTxt').textContent = greet;
+  const remaining = Math.max(expected - collected, 0);
+  document.getElementById('greetSub').textContent =
+    remaining===0 && expected>0 ? 'הכל נגבה החודש. כל הכבוד! 🎉'
+    : `נשארו לגבייה ${usd(remaining)} · ${nPart+nNone} יחידות פתוחות`;
+  /* reminders bar */
+  const open = unpaidList().length;
+  const rb = document.getElementById('remindBtn');
+  rb.style.display = open ? 'flex' : 'none';
+  document.getElementById('remindCount').textContent = open;
+}
+
+function unpaidList(){
+  const out=[];
+  for(const {p,un} of allUnits()){
+    const rec = payRec(un.id);
+    if(rec.status!=='paid' && un.rent!=null) out.push({p,un,rec});
+  }
+  return out;
+}
+
+/* ---- WhatsApp reminders sheet ---- */
+document.getElementById('remindBtn').onclick = ()=>{
+  const list = unpaidList();
+  const tmpl = DB.settings.reminderTemplate || DEFAULT_TMPL;
+  const seq = [];
+  let html = `<p style="font-size:.82rem;color:var(--muted);margin-bottom:8px">לחיצה על 💬 פותחת WhatsApp עם הודעה מוכנה. אפשר לערוך לפני שליחה.</p>`;
+  let rowsHtml = '';
+  for(const {p,un,rec} of list){
+    const fee = lateFeeFor(rec);
+    for(const t of (un.tenants||[])){
+      let msg = fillTmpl(tmpl, t, un, p);
+      if(fee) msg += ` Please note: a late fee of ${usd(fee)} now applies. Total due: ${usd((Number(un.rent)||0)+fee-(rec.status==='partial'?(Number(rec.amount)||0):0))}.`;
+      const wa = waLink(t.phone, msg);
+      if(wa) seq.push({name:t.name, wa});
+      rowsHtml += `<div class="remind-row">
+        <div class="ri"><b>${esc(t.name)}</b><span>${esc(un.name)} · ${esc(p.address)} · ${usd(un.rent)}${fee?` <b style="color:var(--red)">+${usd(fee)} איחור</b>`:''}${rec.status==='partial'?' (שולם חלקית)':''}</span></div>
+        ${wa?`<a class="l-act" href="${wa}" target="_blank" rel="noopener">💬 שליחה</a>`:`<span style="font-size:.72rem;color:var(--muted)">אין טלפון</span>`}
+      </div>`;
+    }
+  }
+  if(seq.length>1) html += `<button class="btn btn-primary btn-block" id="seqSendBtn" style="margin-bottom:12px">▶ סבב שליחה — 1 מתוך ${seq.length}</button>`;
+  html += rowsHtml;
+  openSheet('תזכורות תשלום · '+HE_MONTHS[curMonth], html, null, true);
+  const sb = document.getElementById('seqSendBtn');
+  if(sb){
+    let i=0;
+    sb.onclick = ()=>{
+      window.open(seq[i].wa, '_blank');
+      i++;
+      if(i>=seq.length){ sb.textContent = '✓ נשלחו תזכורות לכולם'; sb.disabled = true; sb.style.opacity=.6; }
+      else sb.textContent = `▶ הבא: ${seq[i].name} — ${i+1} מתוך ${seq.length}`;
+    };
+  }
+};
+
+/* ---- payment receipt ---- */
+function receiptMsg(t, un, p, rec){
+  const paid = rec.status==='paid' ? (Number(rec.amount)||Number(un.rent)||0) : (Number(rec.amount)||0);
+  const balance = rec.status==='partial' ? ` Remaining balance: ${usd(Math.max((Number(un.rent)||0)-paid,0))}.` : '';
+  return RECEIPT_TMPL
+    .replaceAll('{name}', t.name.split(' ')[0])
+    .replaceAll('{paid}', usd(paid))
+    .replaceAll('{unit}', un.name)
+    .replaceAll('{address}', `${p.address}, ${p.city}`)
+    .replaceAll('{month}', `${EN_MONTHS[curMonth]} ${curYear}`)
+    .replaceAll('{balance}', balance);
+}
+function sendReceipt(p, un){
+  const rec = payRec(un.id);
+  const withPhone = (un.tenants||[]).filter(t=>t.phone);
+  if(!withPhone.length) return;
+  if(withPhone.length===1){
+    window.open(waLink(withPhone[0].phone, receiptMsg(withPhone[0], un, p, rec)), '_blank');
+    return;
+  }
+  let html = `<p style="font-size:.82rem;color:var(--muted);margin-bottom:8px">לאיזה דייר לשלוח את הקבלה?</p>`;
+  for(const t of withPhone){
+    html += `<div class="remind-row">
+      <div class="ri"><b>${esc(t.name)}</b><span>${esc(t.phone)}</span></div>
+      <a class="l-act" href="${waLink(t.phone, receiptMsg(t, un, p, rec))}" target="_blank" rel="noopener">🧾 שליחה</a>
+    </div>`;
+  }
+  openSheet(`קבלה · ${un.name}`, html, null, true);
+}
+
+function renderLeaseAlerts(){
+  const box = document.getElementById('leaseAlerts');
+  const soon = [];
+  for(const {p,un} of allUnits()){
+    const dl = daysLeft(un.leaseEnd);
+    if(dl!==null && dl<=90) soon.push({p,un,dl});
+  }
+  soon.sort((a,b)=>a.dl-b.dl);
+  if(!soon.length){ box.innerHTML=''; return; }
+  const cards = soon.map(({p,un,dl})=>{
+    const danger = dl<=30;
+    const tenant = (un.tenants||[])[0];
+    const tel = tenant ? telLink(tenant.phone) : null;
+    const renewMsg = tenant ? fillTmpl(RENEW_TMPL, tenant, un, p) : '';
+    const wa = tenant ? waLink(tenant.phone, renewMsg) : null;
+    const daysTxt = dl<0 ? 'פג' : dl;
+    const subTxt = dl<0 ? `לפני ${-dl} ימים` : dl===0 ? 'מסתיים היום' : 'ימים נותרו';
+    return `<div class="lcard ${danger?'danger':''}">
+      <div class="days-row"><span class="days">${daysTxt}</span><span class="days-sub">${subTxt}</span></div>
+      <div class="l-unit">${esc(un.name)}</div>
+      <div class="l-addr">${esc(p.address)}, ${esc(p.city)}</div>
+      <div class="l-date">חוזה עד ${esc(un.leaseEnd)}${tenant?` · ${esc(tenant.name)}`:''}</div>
+      <div class="l-acts">
+        ${tel?`<a class="l-act" href="${tel}">📞 חיוג</a>`:''}
+        ${wa?`<a class="l-act" href="${wa}" target="_blank" rel="noopener">📄 הצעת חידוש</a>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  box.innerHTML = `<div class="strip-label">⏳ חוזים שמסתיימים בקרוב <b>${soon.length}</b></div>
+    <div class="lease-strip">${cards}</div>`;
+}
+
+function leaseBadge(un){
+  if(!un.leaseEnd) return '';
+  const dl = daysLeft(un.leaseEnd);
+  let cls='', txt=`חוזה עד ${esc(un.leaseEnd)}`;
+  if(dl!==null){
+    if(dl<0){ cls='danger'; txt=`חוזה פג ${esc(un.leaseEnd)}`; }
+    else if(dl<=30){ cls='danger'; txt+=` · עוד ${dl} ימים`; }
+    else if(dl<=90){ cls='warn'; txt+=` · עוד ${dl} ימים`; }
+  }
+  return `<span class="lease-badge ${cls}">${txt}</span>`;
+}
+
+function tenantChips(un){
+  return `<div class="tenant-chips">` + (un.tenants||[]).map(t=>{
+    const tel = telLink(t.phone), wa = waLink(t.phone);
+    return `<span class="tchip">${esc(t.name)}${tel?` <a href="${tel}" aria-label="חיוג">📞</a>`:''}${wa?` <a href="${wa}" target="_blank" rel="noopener" aria-label="וואטסאפ">💬</a>`:''}</span>`;
+  }).join('') + `</div>`;
+}
+
+function renderCollect(){
+  const box = document.getElementById('collectList');
+  box.innerHTML='';
+  const q = searchTerm.toLowerCase();
+  for(const p of DB.properties){
+    const rows=[];
+    for(const un of (p.units||[])){
+      const hay = `${un.name} ${p.address} ${p.city} ${(un.tenants||[]).map(t=>t.name+' '+(t.phone||'')).join(' ')}`.toLowerCase();
+      if(q && !hay.includes(q)) continue;
+      rows.push(un);
+    }
+    if(!rows.length) continue;
+    let pPaid=0, pTotal=0;
+    for(const un of (p.units||[])){ pTotal++; if(payRec(un.id).status==='paid') pPaid++; }
+    const pillCls = pPaid===pTotal ? 'ok' : pPaid>0 ? 'part' : 'no';
+    const g = document.createElement('div'); g.className='pgroup';
+    g.innerHTML = `<h3><span>${esc(p.address)}, ${esc(p.city)}</span>
+      <span style="display:flex;align-items:center;gap:8px">
+        <span class="ppill ${pillCls}">שולם ${pPaid}/${pTotal}</span>
+        <a href="${mapsLink(p)}" target="_blank" rel="noopener" aria-label="מפה">🗺️</a>
+      </span></h3>`;
+    for(const un of rows){
+      const rec = payRec(un.id);
+      const fee = lateFeeFor(rec);
+      const row = document.createElement('div'); row.className='urow';
+      row.innerHTML = `
+        <div class="urow-top">
+          <div class="uname">${esc(un.name)}</div>
+          <div class="urent ${un.rent==null?'missing':''}">${usd(un.rent)}${fee?`<span class="fee-badge">+${usd(fee)} איחור</span>`:''}</div>
+        </div>
+        ${tenantChips(un)}
+        ${leaseBadge(un)}
+        <div class="seg">
+          <button data-s="paid" class="${rec.status==='paid'?'on-paid':''}">✓ שולם</button>
+          <button data-s="partial" class="${rec.status==='partial'?'on-part':''}">◐ חלקי</button>
+          <button data-s="none" class="${rec.status==='none'?'on-none':''}">✗ לא שולם</button>
+        </div>
+        <div class="partial-line ${rec.status==='partial'?'show':''}">
+          <input type="number" inputmode="numeric" min="0" value="${rec.status==='partial'?(rec.amount||''):''}" placeholder="סכום ($)">
+          <span>שולם חלקית מתוך ${usd(un.rent)}${fee?` (+${usd(fee)} איחור)`:''}</span>
+        </div>
+        ${(rec.status==='paid'||rec.status==='partial') && (un.tenants||[]).some(t=>t.phone) ? `<div class="receipt-line"><button class="uact green" data-receipt="1">🧾 שליחת קבלה לדייר</button></div>` : ''}`;
+      row.querySelectorAll('.seg button').forEach(b=>{
+        b.onclick = ()=>{
+          const s = b.dataset.s;
+          if(s==='partial') setPay(un.id,'partial', payRec(un.id).amount||0);
+          else setPay(un.id, s, 0);
+        };
+      });
+      row.querySelector('.partial-line input').addEventListener('change', e=>{ setPay(un.id,'partial', Number(e.target.value)||0); });
+      const rcBtn = row.querySelector('[data-receipt]');
+      if(rcBtn) rcBtn.onclick = ()=>sendReceipt(p, un);
+      g.appendChild(row);
+    }
+    box.appendChild(g);
+  }
+  if(!box.children.length){
+    box.innerHTML = `<div class="bk-card" style="text-align:center"><h3>לא נמצאו תוצאות</h3><p>נסו חיפוש אחר.</p></div>`;
+  }
+}
+
+/* ================= PROPERTIES (redesigned) ================= */
+const openProps = new Set();
+function renderProps(){
+  const box = document.getElementById('propsList'); box.innerHTML='';
+  for(const p of DB.properties){
+    const units = p.units||[];
+    const nT = units.reduce((s,u)=>s+(u.tenants||[]).length,0);
+    const totalRent = units.reduce((s,u)=>s+(Number(u.rent)||0),0);
+    const card = document.createElement('div'); card.className='pcard'+(openProps.has(p.id)?' open':'');
+    const head = document.createElement('div'); head.className='pcard-head';
+    head.innerHTML = `<div><h3>${esc(p.address)}</h3>
+      <div class="meta">${esc(p.city)}, ${esc(p.state)} ${esc(p.zip||'')} · ${units.length} יחידות · ${nT} דיירים · ${usd(totalRent)}/חודש</div></div>
+      <div class="icon-btns">
+        <a class="ib" href="${mapsLink(p)}" target="_blank" rel="noopener" aria-label="מפה" onclick="event.stopPropagation()">🗺️</a>
+        <button class="ib" data-act="edit" aria-label="עריכה">✎</button>
+        <button class="ib" data-act="del" aria-label="מחיקה">🗑</button>
+        <button class="ib" data-act="toggle">${openProps.has(p.id)?'▾':'◂'}</button>
+      </div>`;
+    head.onclick = e=>{
+      const act = e.target.dataset?.act;
+      if(act==='edit'){ e.stopPropagation(); propForm(p); return; }
+      if(act==='del'){ e.stopPropagation(); if(confirm(`למחוק את "${p.address}" כולל כל היחידות והדיירים?`)){ DB.properties = DB.properties.filter(x=>x.id!==p.id); save(); refresh(); } return; }
+      if(e.target.closest('a')) return;
+      openProps.has(p.id) ? openProps.delete(p.id) : openProps.add(p.id); renderProps();
+    };
+    card.appendChild(head);
+
+    const body = document.createElement('div'); body.className='pcard-body';
+    for(const un of units){
+      const uc = document.createElement('div'); uc.className='unit-card';
+      const expTotal = (un.expenses||[]).reduce((s,x)=>s+(Number(x.amount)||0),0);
+      const exp = (un.expenses||[]).map(x=>`${esc(x.label)} ${usd(x.amount)}`).join(' · ');
+      uc.innerHTML = `
+        <div class="unit-card-head"><span class="un">⌂ ${esc(un.name)}</span><span class="ur">${usd(un.rent)}<small style="font-family:Heebo;font-size:.68rem;font-weight:400"> /חודש</small></span></div>
+        <div class="unit-card-body">
+          ${un.leaseStart?`<div class="kv"><b>חוזה</b><span>${esc(un.leaseStart)} – ${esc(un.leaseEnd||'')} ${leaseBadge(un)}</span></div>`:''}
+          ${exp?`<div class="kv"><b>הוצאות</b><span>${exp} (${usd(expTotal)}/חודש)</span></div>`:''}
+          <div class="unit-tenants">
+            ${(un.tenants||[]).map(t=>{
+              const tel = telLink(t.phone), wa = waLink(t.phone);
+              return `<div class="tline"><div><b>${esc(t.name)}</b><div class="ti">${esc(t.phone||'אין טלפון')}</div></div>
+                <div class="icon-btns">
+                  ${tel?`<a class="ib" href="${tel}">📞</a>`:''}
+                  ${wa?`<a class="ib" href="${wa}" target="_blank" rel="noopener">💬</a>`:''}
+                  <button class="ib" data-tedit="${t.id}">✎</button><button class="ib" data-tdel="${t.id}">🗑</button>
+                </div></div>`;
+            }).join('') || `<div class="ti" style="font-size:.78rem;color:var(--muted)">אין דיירים ביחידה</div>`}
+          </div>
+          ${(un.documents||[]).length?`<div class="unit-docs">${un.documents.map(d=>`
+            <div class="doc-line"><a href="${attr(d.url)}" target="_blank" rel="noopener">📄 ${esc(d.name)}</a>
+            <button class="ib" data-ddel="${d.id}">🗑</button></div>`).join('')}</div>`:''}
+        </div>
+        <div class="unit-acts">
+          <button class="uact green" data-a="addT">＋ דייר</button>
+          <button class="uact" data-a="addD">📄 מסמך</button>
+          <button class="uact" data-a="addR">🔧 תקלה</button>
+          <button class="uact" data-a="editU">✎ עריכה</button>
+          <button class="uact red" data-a="delU">🗑 מחיקה</button>
+        </div>`;
+      uc.querySelector('[data-a="addT"]').onclick = ()=>tenantForm(un);
+      uc.querySelector('[data-a="addD"]').onclick = ()=>docForm(un);
+      uc.querySelector('[data-a="addR"]').onclick = ()=>repairForm(null, p.id, un.id);
+      uc.querySelector('[data-a="editU"]').onclick = ()=>unitForm(p,un);
+      uc.querySelector('[data-a="delU"]').onclick = ()=>{ if(confirm(`למחוק את "${un.name}"?`)){ p.units = p.units.filter(x=>x.id!==un.id); save(); refresh(); } };
+      uc.querySelectorAll('[data-tedit]').forEach(b=>{ b.onclick = ()=>{ const t = un.tenants.find(x=>x.id===b.dataset.tedit); tenantForm(un,t); }; });
+      uc.querySelectorAll('[data-tdel]').forEach(b=>{ b.onclick = ()=>{ const t = un.tenants.find(x=>x.id===b.dataset.tdel); if(t&&confirm(`למחוק את "${t.name}"?`)){ un.tenants = un.tenants.filter(x=>x.id!==t.id); save(); refresh(); } }; });
+      uc.querySelectorAll('[data-ddel]').forEach(b=>{ b.onclick = ()=>{ un.documents = un.documents.filter(x=>x.id!==b.dataset.ddel); save(); refresh(); }; });
+      body.appendChild(uc);
+    }
+    const add = document.createElement('div'); add.style.padding='0 0 10px';
+    add.innerHTML = `<button class="btn btn-ghost" style="width:100%;justify-content:center">+ הוספת יחידה</button>`;
+    add.querySelector('button').onclick = ()=>unitForm(p);
+    body.appendChild(add);
+    card.appendChild(body);
+    box.appendChild(card);
+  }
+}
+document.getElementById('addPropBtn').onclick = ()=>propForm();
+
+/* ================= REPAIRS ================= */
+let repairFilter='all';
+document.querySelectorAll('.rfilters button').forEach(b=>{
+  b.onclick = ()=>{ repairFilter=b.dataset.f;
+    document.querySelectorAll('.rfilters button').forEach(x=>x.classList.toggle('on',x===b));
+    renderRepairs(); };
+});
+const RSTAT = {open:'פתוחה', progress:'בטיפול', done:'טופלה'};
+function repairPlace(r){
+  const p = DB.properties.find(x=>x.id===r.propertyId);
+  const un = p && (p.units||[]).find(x=>x.id===r.unitId);
+  return p ? `${p.address}${un?` · ${un.name}`:''}` : '';
+}
+function renderRepairs(){
+  const box = document.getElementById('repairsList'); box.innerHTML='';
+  const list = DB.repairs.filter(r=>repairFilter==='all'||r.status===repairFilter)
+    .sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  if(!list.length){
+    box.innerHTML = `<div class="bk-card" style="text-align:center"><h3>${repairFilter==='all'?'אין תקלות 🎉':'אין תקלות בסטטוס הזה'}</h3><p>דיווח תקלה חדשה בכפתור למטה, או מתוך יחידה במסך הנכסים.</p></div>`;
+    return;
+  }
+  for(const r of list){
+    const c = document.createElement('div'); c.className='rcard';
+    c.innerHTML = `
+      <div class="rcard-top"><b>${esc(r.title)}</b><span class="rstatus ${r.status}">${RSTAT[r.status]||r.status}</span></div>
+      <div class="rmeta">📅 ${esc(fmtDate(r.date))} · ${esc(repairPlace(r))}${r.cost?` · עלות ${usd(r.cost)}`:''}${r.vendor?` · ${esc(r.vendor)}`:''}</div>
+      ${r.notes?`<div class="rmeta">${esc(r.notes)}</div>`:''}
+      <div class="racts">
+        ${r.status!=='done'?`<button type="button" class="uact green" data-a="next" data-id="${r.id}">${r.status==='open'?'▶ העבר לטיפול':'✓ סמן כטופלה'}</button>`:''}
+        <button type="button" class="uact" data-a="edit" data-id="${r.id}">✎ עריכה</button>
+        <button type="button" class="uact red" data-a="del" data-id="${r.id}">🗑 מחיקה</button>
+      </div>`;
+    box.appendChild(c);
+  }
+}
+document.getElementById('addRepairBtn').onclick = ()=>repairForm();
+document.getElementById('repairsList').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-a]');
+  if(!btn) return;
+  const r = DB.repairs.find(x=>x.id===btn.dataset.id);
+  if(!r) return;
+  const act = btn.dataset.a;
+  if(act==='edit'){ repairForm(r); }
+  else if(act==='next'){ r.status = r.status==='open'?'progress':'done'; save(); renderRepairs(); renderReports(); }
+  else if(act==='del'){ if(confirm('למחוק את התקלה?')){ DB.repairs = DB.repairs.filter(x=>x.id!==r.id); save(); renderRepairs(); renderReports(); } }
+});
+
+/* ================= REPORTS ================= */
+function monthIncome(mk){
+  let sum=0;
+  const recs = DB.payments[mk]||{};
+  for(const uidv in recs){
+    const r = recs[uidv];
+    if(r.status==='paid') sum += Number(r.amount)|| (Number((findUnit(uidv)||{}).rent)||0);
+    else if(r.status==='partial') sum += Number(r.amount)||0;
+  }
+  return sum;
+}
+function renderReports(){
+  /* stat grid */
+  const units = allUnits();
+  const totalRent = units.reduce((s,{un})=>s+(Number(un.rent)||0),0);
+  const monthlyExp = units.reduce((s,{un})=>s+(un.expenses||[]).reduce((q,x)=>q+(Number(x.amount)||0),0),0);
+  const occupied = units.filter(({un})=>(un.tenants||[]).length>0).length;
+  const openRep = DB.repairs.filter(r=>r.status!=='done').length;
+  let yr12=0;
+  const d0 = new Date(); 
+  for(let i=0;i<12;i++){
+    const d = new Date(d0.getFullYear(), d0.getMonth()-i, 1);
+    yr12 += monthIncome(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);
+  }
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat g"><b>${usd(totalRent)}</b><span>שכ"ד חודשי צפוי</span></div>
+    <div class="stat b"><b>${usd(yr12)}</b><span>נגבה ב-12 חודשים</span></div>
+    <div class="stat a"><b>${usd(monthlyExp)}</b><span>הוצאות חודשיות</span></div>
+    <div class="stat g"><b>${usd(totalRent-monthlyExp)}</b><span>נטו חודשי צפוי</span></div>
+    <div class="stat ${occupied===units.length?'g':'a'}"><b>${units.length?Math.round(occupied/units.length*100):0}%</b><span>תפוסה (${occupied}/${units.length} יחידות)</span></div>
+    <div class="stat ${openRep?'r':'g'}"><b>${openRep}</b><span>תקלות פתוחות</span></div>`;
+
+  /* 12-month bars */
+  const bars=[];
+  let maxV=1;
+  const vals=[];
+  for(let i=11;i>=0;i--){
+    const d = new Date(d0.getFullYear(), d0.getMonth()-i, 1);
+    const mk = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const v = monthIncome(mk);
+    vals.push({mk, v, lbl: `${d.getMonth()+1}/${String(d.getFullYear()).slice(2)}`});
+    if(v>maxV) maxV=v;
+  }
+  if(totalRent>maxV) maxV=totalRent;
+  document.getElementById('barsBox').innerHTML = vals.map(({v,lbl})=>{
+    const h = Math.round(v/maxV*100);
+    const cls = v===0?'zero': (totalRent>0 && v<totalRent*0.7)?'low':'';
+    return `<div class="bar-col"><div class="bar ${cls}" style="height:${Math.max(h,2)}%"></div><span class="bar-lbl">${lbl}</span></div>`;
+  }).join('');
+
+  /* tax table */
+  document.getElementById('yearLabel').textContent = taxYear;
+  const tbody = document.getElementById('taxBody'); tbody.innerHTML='';
+  let totI=0, totE=0;
+  for(const p of DB.properties){
+    let income=0;
+    for(let m=1;m<=12;m++){
+      const mk = `${taxYear}-${String(m).padStart(2,'0')}`;
+      const recs = DB.payments[mk]||{};
+      for(const un of (p.units||[])){
+        const r = recs[un.id];
+        if(!r) continue;
+        if(r.status==='paid') income += Number(r.amount)||Number(un.rent)||0;
+        else if(r.status==='partial') income += Number(r.amount)||0;
+      }
+    }
+    const unitExp = (p.units||[]).reduce((s,u)=>s+(u.expenses||[]).reduce((q,x)=>q+(Number(x.amount)||0),0),0)*12;
+    const repExp = DB.repairs.filter(r=>r.propertyId===p.id && r.status==='done' && (r.date||'').includes(String(taxYear)))
+      .reduce((s,r)=>s+(Number(r.cost)||0),0);
+    const expenses = unitExp + repExp;
+    totI+=income; totE+=expenses;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${esc(p.address)}</td><td>${usd(income)}</td><td>${usd(expenses)}</td><td style="color:${income-expenses>=0?'var(--green)':'var(--red)'}">${usd(income-expenses)}</td>`;
+    tbody.appendChild(tr);
+  }
+  const trT = document.createElement('tr');
+  trT.innerHTML = `<td>סה"כ</td><td>${usd(totI)}</td><td>${usd(totE)}</td><td style="color:${totI-totE>=0?'var(--green)':'var(--red)'}">${usd(totI-totE)}</td>`;
+  tbody.appendChild(trT);
+}
+document.getElementById('taxCsvBtn').onclick = ()=>{
+  let csv = 'Property,City,Income,Expenses,Net\n';
+  for(const p of DB.properties){
+    let income=0;
+    for(let m=1;m<=12;m++){
+      const mk = `${taxYear}-${String(m).padStart(2,'0')}`;
+      const recs = DB.payments[mk]||{};
+      for(const un of (p.units||[])){
+        const r = recs[un.id]; if(!r) continue;
+        if(r.status==='paid') income += Number(r.amount)||Number(un.rent)||0;
+        else if(r.status==='partial') income += Number(r.amount)||0;
+      }
+    }
+    const unitExp = (p.units||[]).reduce((s,u)=>s+(u.expenses||[]).reduce((q,x)=>q+(Number(x.amount)||0),0),0)*12;
+    const repExp = DB.repairs.filter(r=>r.propertyId===p.id && r.status==='done' && (r.date||'').includes(String(taxYear)))
+      .reduce((s,r)=>s+(Number(r.cost)||0),0);
+    const expenses = unitExp+repExp;
+    csv += `"${p.address}","${p.city}",${income},${expenses},${income-expenses}\n`;
+  }
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `gal-properties-tax-${taxYear}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('קובץ ה-CSV ירד');
+};
+document.getElementById('taxPrintBtn').onclick = ()=>window.print();
+
+/* ================= sheet forms ================= */
+const overlay = document.getElementById('overlay');
+let sheetOnSave = null;
+function openSheet(title, fieldsHtml, onSave, readOnly){
+  document.getElementById('sheetTitle').textContent = title;
+  document.getElementById('sheetFields').innerHTML = fieldsHtml;
+  sheetOnSave = onSave;
+  document.getElementById('sheetSave').style.display = readOnly?'none':'';
+  overlay.classList.add('show');
+  if(!readOnly) setTimeout(()=>{ const f = overlay.querySelector('input,textarea'); f && f.focus(); }, 120);
+}
+function closeSheet(){ overlay.classList.remove('show'); sheetOnSave=null; }
+document.getElementById('sheetCancel').onclick = closeSheet;
+overlay.addEventListener('click', e=>{ if(e.target===overlay) closeSheet(); });
+document.getElementById('sheetSave').onclick = ()=>{ if(sheetOnSave && sheetOnSave()!==false){ closeSheet(); save(); refresh(); } };
+const F = id => (document.getElementById(id)?.value||'').trim();
+
+function propForm(p){
+  openSheet(p?'עריכת נכס':'נכס חדש', `
+    <div class="field"><label>כתובת</label><input id="f_addr" value="${attr(p?.address)}" placeholder="123 Main St"></div>
+    <div class="field"><label>עיר</label><input id="f_city" value="${attr(p?.city)}"></div>
+    <div class="field"><label>מדינה</label><input id="f_state" value="${attr(p?.state||'FL')}"></div>
+    <div class="field"><label>מיקוד</label><input id="f_zip" value="${attr(p?.zip)}"></div>
+    <div class="field"><label>מחוז (County)</label><input id="f_county" value="${attr(p?.county)}"></div>`,
+    ()=>{
+      const address = F('f_addr'); if(!address){ alert('צריך כתובת'); return false; }
+      const vals = {address, city:F('f_city'), state:F('f_state'), zip:F('f_zip'), county:F('f_county')};
+      if(p) Object.assign(p, vals);
+      else { const np={id:uid(),...vals,units:[]}; DB.properties.push(np); openProps.add(np.id); }
+    });
+}
+function unitForm(p,un){
+  openSheet(un?'עריכת יחידה':`יחידה חדשה · ${p.address}`, `
+    <div class="field"><label>שם היחידה</label><input id="f_uname" value="${attr(un?.name)}" placeholder="Unit #1"></div>
+    <div class="field"><label>שכר דירה חודשי ($)</label><input id="f_rent" type="number" inputmode="numeric" min="0" value="${un?.rent??''}"></div>
+    <div class="field"><label>תחילת חוזה (MM/DD/YYYY)</label><input id="f_ls" value="${attr(un?.leaseStart)}"></div>
+    <div class="field"><label>סיום חוזה (MM/DD/YYYY)</label><input id="f_le" value="${attr(un?.leaseEnd)}"></div>`,
+    ()=>{
+      const name=F('f_uname'); if(!name){ alert('צריך שם ליחידה'); return false; }
+      const rent = F('f_rent')==='' ? null : Number(F('f_rent'));
+      if(un) Object.assign(un,{name,rent,leaseStart:F('f_ls'),leaseEnd:F('f_le')});
+      else { p.units=p.units||[]; p.units.push({id:uid(),name,rent,leaseStart:F('f_ls'),leaseEnd:F('f_le'),tenants:[],expenses:[],documents:[]}); }
+    });
+}
+function tenantForm(un,t){
+  openSheet(t?'עריכת דייר':`דייר חדש · ${un.name}`, `
+    <div class="field"><label>שם</label><input id="f_tname" value="${attr(t?.name)}"></div>
+    <div class="field"><label>טלפון</label><input id="f_phone" value="${attr(t?.phone)}" inputmode="tel" placeholder="954-000-0000"></div>`,
+    ()=>{
+      const name=F('f_tname'); if(!name){ alert('צריך שם'); return false; }
+      if(t) Object.assign(t,{name,phone:F('f_phone')});
+      else { un.tenants=un.tenants||[]; un.tenants.push({id:uid(),name,phone:F('f_phone')}); }
+    });
+}
+function docForm(un){
+  openSheet(`מסמך חדש · ${un.name}`, `
+    <div class="field"><label>שם המסמך</label><input id="f_dname" placeholder="חוזה שכירות 2026"></div>
+    <div class="field"><label>קישור (Drive / iCloud / תמונה)</label><input id="f_durl" placeholder="https://..." style="direction:ltr"></div>`,
+    ()=>{
+      const name=F('f_dname'), url=F('f_durl');
+      if(!name||!url){ alert('צריך שם וקישור'); return false; }
+      un.documents = un.documents||[];
+      un.documents.push({id:uid(),name,url,date:new Date().toISOString().slice(0,10)});
+    });
+}
+function repairForm(r, pid, uidv){
+  const props = DB.properties;
+  const selP = r?.propertyId || pid || (props[0]&&props[0].id) || '';
+  const optsP = props.map(p=>`<option value="${p.id}" ${p.id===selP?'selected':''}>${esc(p.address)}</option>`).join('');
+  function optsU(pidSel, sel){
+    const p = props.find(x=>x.id===pidSel);
+    return `<option value="">— כללי לנכס —</option>` + ((p&&p.units)||[]).map(u=>`<option value="${u.id}" ${u.id===sel?'selected':''}>${esc(u.name)}</option>`).join('');
+  }
+  openSheet(r?'עריכת תקלה':'דיווח תקלה', `
+    <div class="field"><label>תיאור התקלה</label><input id="f_rtitle" value="${attr(r?.title)}" placeholder="דליפה במטבח"></div>
+    <div class="field"><label>תאריך</label><input id="f_rdate" type="date" value="${attr(r?.date || new Date().toISOString().slice(0,10))}"></div>
+    <div class="field"><label>נכס</label><select id="f_rprop">${optsP}</select></div>
+    <div class="field"><label>יחידה</label><select id="f_runit">${optsU(selP, r?.unitId||uidv)}</select></div>
+    <div class="field"><label>סטטוס</label><select id="f_rstat">
+      <option value="open" ${(!r||r.status==='open')?'selected':''}>פתוחה</option>
+      <option value="progress" ${r?.status==='progress'?'selected':''}>בטיפול</option>
+      <option value="done" ${r?.status==='done'?'selected':''}>טופלה</option>
+    </select></div>
+    <div class="field"><label>עלות ($)</label><input id="f_rcost" type="number" inputmode="numeric" min="0" value="${r?.cost??''}"></div>
+    <div class="field"><label>איש מקצוע</label><input id="f_rvendor" value="${attr(r?.vendor)}"></div>
+    <div class="field"><label>הערות</label><input id="f_rnotes" value="${attr(r?.notes)}"></div>`,
+    ()=>{
+      const title = F('f_rtitle'); if(!title){ alert('צריך תיאור'); return false; }
+      const vals = {title, date: F('f_rdate') || new Date().toISOString().slice(0,10),
+        propertyId:F('f_rprop'), unitId:F('f_runit'), status:F('f_rstat'),
+        cost: F('f_rcost')===''?null:Number(F('f_rcost')), vendor:F('f_rvendor'), notes:F('f_rnotes')};
+      if(r) Object.assign(r, vals);
+      else DB.repairs.push({id:uid(),...vals});
+    });
+  document.getElementById('f_rprop').addEventListener('change', e=>{
+    document.getElementById('f_runit').innerHTML = optsU(e.target.value);
+  });
+}
+
+/* ================= MORE: template / csv / backup ================= */
+document.getElementById('tmplBox').value = DB.settings.reminderTemplate || DEFAULT_TMPL;
+document.getElementById('remDay').value = DB.settings.reminderDay || 1;
+document.getElementById('lateFee').value = DB.settings.lateFee || '';
+document.getElementById('lateDays').value = DB.settings.lateDays || '';
+document.getElementById('tmplSaveBtn').onclick = ()=>{
+  DB.settings.reminderTemplate = document.getElementById('tmplBox').value.trim() || DEFAULT_TMPL;
+  DB.settings.reminderDay = Math.min(28, Math.max(1, Number(document.getElementById('remDay').value)||1));
+  DB.settings.lateFee = Math.max(0, Number(document.getElementById('lateFee').value)||0);
+  DB.settings.lateDays = Math.max(0, Number(document.getElementById('lateDays').value)||0);
+  save(); refresh(); toast('ההגדרות נשמרו');
+};
+document.getElementById('notifBtn').onclick = ()=>{
+  if(!('Notification' in window)){ alert('הדפדפן לא תומך בהתראות'); return; }
+  Notification.requestPermission().then(p=>{
+    toast(p==='granted' ? 'התראות הופעלו 🔔' : 'ההרשאה לא ניתנה');
+  });
+};
+document.getElementById('csvFile').addEventListener('change', e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{ document.getElementById('csvBox').value = r.result; };
+  r.readAsText(f);
+});
+document.getElementById('csvBtn').onclick = ()=>{
+  const txt = document.getElementById('csvBox').value.trim();
+  if(!txt){ alert('אין נתונים'); return; }
+  const lines = txt.split(/\r?\n/).filter(x=>x.trim());
+  const head = lines[0].split(',').map(x=>x.trim().toLowerCase().replace(/[^a-z_]/g,''));
+  const idx = n => head.indexOf(n);
+  const iA=idx('address'), iC=idx('city'), iU=idx('unit'), iR=idx('rent'), iT=idx('tenant'), iP=idx('phone'), iLS=idx('lease_start'), iLE=idx('lease_end');
+  if(iA<0){ alert('חסרה עמודת address'); return; }
+  let added=0;
+  for(let i=1;i<lines.length;i++){
+    const c = lines[i].split(',').map(x=>x.trim());
+    const addr = c[iA]; if(!addr) continue;
+    let p = DB.properties.find(x=>x.address.toLowerCase()===addr.toLowerCase());
+    if(!p){ p = {id:uid(),address:addr,city:iC>=0?(c[iC]||''):'',state:'FL',zip:'',county:'',units:[]}; DB.properties.push(p); }
+    const unName = (iU>=0 && c[iU]) || 'Main Unit';
+    let un = p.units.find(x=>x.name.toLowerCase()===unName.toLowerCase());
+    if(!un){
+      un = {id:uid(),name:unName,rent:(iR>=0&&c[iR])?Number(c[iR]):null,
+        leaseStart:iLS>=0?(c[iLS]||''):'',leaseEnd:iLE>=0?(c[iLE]||''):'',tenants:[],expenses:[],documents:[]};
+      p.units.push(un);
+    }
+    if(iT>=0 && c[iT]){ un.tenants.push({id:uid(),name:c[iT],phone:iP>=0?(c[iP]||''):''}); added++; }
+  }
+  save(); refresh();
+  document.getElementById('csvBox').value='';
+  toast(`ייבוא הושלם — נוספו ${added} דיירים`);
+};
+function renderBackup(){
+  document.getElementById('nProps').textContent = DB.properties.length;
+  document.getElementById('nUnits').textContent = DB.properties.reduce((s,p)=>s+(p.units||[]).length,0);
+  document.getElementById('nTenants').textContent = DB.properties.reduce((s,p)=>s+(p.units||[]).reduce((q,u)=>q+(u.tenants||[]).length,0),0);
+}
+document.getElementById('exportBtn').onclick = ()=>{
+  const blob = new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `gal-properties-backup-${monthKey()}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('הגיבוי ירד למכשיר');
+};
+document.getElementById('importFile').addEventListener('change', e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{ document.getElementById('importText').value = r.result; };
+  r.readAsText(f);
+});
+document.getElementById('importBtn').onclick = ()=>{
+  try{
+    const data = JSON.parse(document.getElementById('importText').value);
+    if(!Array.isArray(data.properties)) throw 0;
+    DB = { properties:data.properties, payments:data.payments||{}, repairs:data.repairs||[], settings:data.settings||{} };
+    for(const p of DB.properties) for(const un of (p.units||[])){ un.documents=un.documents||[]; un.expenses=un.expenses||[]; }
+    save(); refresh(); toast('הנתונים יובאו בהצלחה'); document.getElementById('importText').value='';
+  }catch(e){ alert('ה-JSON לא תקין.'); }
+};
+document.getElementById('reseedBtn').onclick = ()=>{
+  if(confirm('לשחזר את הפורטפוליו המקורי? עריכות בנכסים יימחקו, היסטוריית הגבייה והתקלות יישמרו.')){
+    DB.properties = SEED(); save(); refresh(); toast('הפורטפוליו שוחזר');
+  }
+};
+document.getElementById('resetBtn').onclick = ()=>{
+  if(confirm('למחוק הכל, כולל היסטוריית גבייה ותקלות?')){
+    DB={properties:SEED(),payments:{},repairs:[],settings:{}}; save(); refresh(); toast('אופס בוצע — נטענו נתוני המקור');
+  }
+};
+
+/* ================= nav / utils ================= */
+function showView(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active', b.dataset.view===v));
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('nav button').forEach(b=> b.onclick = ()=>showView(b.dataset.view));
+
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function attr(s){ return esc(s??''); }
+function fmtDate(s){
+  if(!s) return '—';
+  const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) return `${m[3]}/${m[2]}/${m[1]}`;
+  return s;
+}
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+function renderMonthLabel(){ document.getElementById('monthLabel').textContent = `${HE_MONTHS[curMonth]} ${curYear}`; }
+
+/* ================= NUDGE (reminder day) ================= */
+function renderNudge(){
+  const box = document.getElementById('nudgeBox');
+  const day = Number(DB.settings.reminderDay)||1;
+  const t = new Date(); const mk = monthKey();
+  const isCurrentMonth = t.getFullYear()===curYear && t.getMonth()===curMonth;
+  const open = unpaidList().length;
+  if(!isCurrentMonth || t.getDate()<day || !open || DB.settings.lastNudge===mk){ box.innerHTML=''; return; }
+  box.innerHTML = `<div class="nudge"><b>🔔 יום גבייה! ${open} יחידות טרם שילמו החודש</b>
+    <div class="nacts">
+      <button class="uact green" id="nudgeSend">📨 שליחת תזכורות עכשיו</button>
+      <button class="uact" id="nudgeDismiss">סגירה עד החודש הבא</button>
+    </div></div>`;
+  document.getElementById('nudgeSend').onclick = ()=>document.getElementById('remindBtn').click();
+  document.getElementById('nudgeDismiss').onclick = ()=>{ DB.settings.lastNudge = mk; save(); renderNudge(); };
+}
+function maybeNotify(){
+  try{
+    if(!('Notification' in window) || Notification.permission!=='granted') return;
+    const day = Number(DB.settings.reminderDay)||1;
+    const t = new Date(); const today = t.toISOString().slice(0,10);
+    const open = unpaidList().length;
+    if(t.getDate()>=day && open && DB.settings.lastNotif!==today && DB.settings.lastNudge!==monthKey()){
+      new Notification('Gal Properties', {body:`🔔 ${open} יחידות טרם שילמו החודש — שווה לשלוח תזכורות`, icon:'icon-192.png'});
+      DB.settings.lastNotif = today; save();
+    }
+  }catch(e){}
+}
+
+/* ================= SYNC (Firebase) ================= */
+const FB_CONFIG = {apiKey:"AIzaSyCv-5E6mJp7E1ZbAyIshutYWXuIVL0R3Uk",authDomain:"izhaki-properties.firebaseapp.com",projectId:"izhaki-properties",storageBucket:"izhaki-properties.firebasestorage.app",messagingSenderId:"612129056260",appId:"1:612129056260:web:b3228e253f06603437f751"};
+const SYNC_KEY='gal-sync-code-v2', CLIENT_KEY='gal-client-id';
+function clientId(){
+  try{ let c = localStorage.getItem(CLIENT_KEY); if(!c){ c = uid(); localStorage.setItem(CLIENT_KEY, c); } return c; }
+  catch(e){ return 'mem'; }
+}
+function syncCode(){ try{ return localStorage.getItem(SYNC_KEY)||''; }catch(e){ return ''; } }
+let fbDb=null, syncUnsub=null, pushTimer=null, applyingRemote=false;
+function adoptData(d){
+  DB = d;
+  DB.repairs = DB.repairs||[]; DB.settings = DB.settings||{}; DB.payments = DB.payments||{};
+  DB.properties = DB.properties||[];
+  for(const p of DB.properties) for(const un of (p.units||[])){ un.documents=un.documents||[]; un.expenses=un.expenses||[]; }
+  store.set(DB);
+}
+function ensureFb(){
+  if(!window.firebase) return false;
+  if(!fbDb){ try{ firebase.initializeApp(FB_CONFIG); fbDb = firebase.firestore(); }catch(e){ try{ fbDb = firebase.firestore(); }catch(e2){ return false; } } }
+  return !!fbDb;
+}
+function initSync(){
+  renderSync();
+  if(!syncCode() || !ensureFb()) return;
+  if(syncUnsub) syncUnsub();
+  syncUnsub = fbDb.collection('families').doc(syncCode()).onSnapshot(snap=>{
+    const d = snap.data();
+    if(!d || !d.data || d.clientId===clientId()) return;
+    applyingRemote = true;
+    try{ adoptData(d.data); refresh(); toast('עודכן ממכשיר אחר 🔄'); }
+    finally{ applyingRemote = false; }
+  }, ()=>{});
+}
+function pushSync(){
+  if(applyingRemote || !syncCode()) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(()=>{
+    if(!ensureFb()) return;
+    try{ fbDb.collection('families').doc(syncCode()).set({data:DB, clientId:clientId(), updatedAt:Date.now()}); }catch(e){}
+  }, 800);
+}
+function renderSync(){
+  const on = !!syncCode();
+  const dot = document.getElementById('syncDot');
+  if(dot) dot.classList.toggle('on', on);
+  const offBox = document.getElementById('syncOff'), onBox = document.getElementById('syncOn');
+  if(offBox) offBox.style.display = on?'none':'';
+  if(onBox) onBox.style.display = on?'':'none';
+  const show = document.getElementById('syncCodeShow');
+  if(show) show.textContent = syncCode();
+}
+document.getElementById('syncEnableBtn').onclick = async ()=>{
+  if(!ensureFb()){ alert('אין חיבור לאינטרנט או שספריית הסנכרון לא נטענה. נסו שוב.'); return; }
+  let code = (document.getElementById('syncCodeInput').value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!code) code = Math.random().toString(36).slice(2,8).toUpperCase();
+  try{
+    const ref = fbDb.collection('families').doc(code);
+    const snap = await ref.get();
+    if(snap.exists && snap.data() && snap.data().data){
+      if(confirm('נמצאו נתונים קיימים תחת הקוד הזה. לטעון אותם למכשיר?\n(ביטול = לדרוס אותם עם הנתונים שבמכשיר הזה)')){
+        adoptData(snap.data().data);
+      } else {
+        await ref.set({data:DB, clientId:clientId(), updatedAt:Date.now()});
+      }
+    } else {
+      await ref.set({data:DB, clientId:clientId(), updatedAt:Date.now()});
+    }
+    try{ localStorage.setItem(SYNC_KEY, code); }catch(e){}
+    initSync(); refresh();
+    toast('סנכרון הופעל · קוד '+code);
+  }catch(e){ alert('הסנכרון נכשל: '+(e && e.message || e)); }
+};
+document.getElementById('syncDisableBtn').onclick = ()=>{
+  if(!confirm('לנתק את הסנכרון במכשיר הזה? הנתונים יישארו במכשיר ובענן.')) return;
+  if(syncUnsub){ syncUnsub(); syncUnsub=null; }
+  try{ localStorage.removeItem(SYNC_KEY); }catch(e){}
+  renderSync(); toast('הסנכרון נותק');
+};
+
+function refresh(){ renderMonthLabel(); renderRing(); renderNudge(); renderLeaseAlerts(); renderCollect(); renderProps(); renderRepairs(); renderReports(); renderBackup(); renderSync(); }
+refresh();
+initSync();
+maybeNotify();
+
+/* ================= PWA ================= */
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+</script>
+</body>
 </html>

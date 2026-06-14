@@ -1,0 +1,27 @@
+{
+  "name": "Gal Properties",
+  "short_name": "Gal Properties",
+  "description": "ניהול נכסים, דיירים וגבייה חודשית",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F6F2",
+  "theme_color": "#14342B",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
